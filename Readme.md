@@ -1,7 +1,7 @@
 # Личный проект «Большое путешествие» [![Build status][travis-image]][travis-url]
 
 * Студент: [Дмитрий Безродный](https://up.htmlacademy.ru/ecmascript/12/user/66791).
-* Наставник: `Неизвестно`.
+* Наставник: [Александр Тимоновский](https://up.htmlacademy.ru/ecmascript/12/user/768125).
 
 ---
 
