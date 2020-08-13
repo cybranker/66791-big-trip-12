@@ -6,6 +6,7 @@ import {createTripEventEditTemplate} from "./view/trip-event-edit.js";
 import {createTripListTemplate} from "./view/trip-list.js";
 import {createTripDayTemplate} from "./view/trip-day.js";
 import {createTripEventTemplate} from "./view/trip-event.js";
+import {generateTrip} from "./mock/trip.js";
 
 const TRIP_COUNT = 3;
 
