@@ -38,4 +38,6 @@ const humanizeTaskDate = (date, yearType) => date
     minute: `2-digit`
   });
 
-export {getRandomInteger, getArrayRandomLength, getEventWithoutActionName, upperFirst, humanizeTaskDate};
+const dateTimeFormat = (date) => `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+
+export {getRandomInteger, getArrayRandomLength, getEventWithoutActionName, upperFirst, humanizeTaskDate, dateTimeFormat};
