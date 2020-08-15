@@ -8,7 +8,10 @@ import {createTripDayTemplate} from "./view/trip-day.js";
 import {createTripEventTemplate} from "./view/trip-event.js";
 import {generateTrip} from "./mock/trip.js";
 
-const TRIP_COUNT = 3;
+const TRIP_COUNT = 21;
+
+const trips = new Array(TRIP_COUNT).fill().map(generateTrip);
+console.log(`trips`, trips);
 
 const render = (container, template, place) => container.insertAdjacentHTML(place, template);
 
@@ -21,7 +24,7 @@ render(tripControlsElement.children[0], createTripMenuTemplate(), `afterend`);
 render(tripControlsElement, createTripFiltersTemplate(), `beforeend`);
 
 render(siteMainElement, createTripSortTemplate(), `beforeend`);
-render(siteMainElement, createTripEventEditTemplate(), `beforeend`);
+// render(siteMainElement, createTripEventEditTemplate(), `beforeend`);
 render(siteMainElement, createTripListTemplate(), `beforeend`);
 
 const tripListElement = siteMainElement.querySelector(`.trip-days`);
@@ -30,6 +33,8 @@ render(tripListElement, createTripDayTemplate(), `beforeend`);
 
 const tripEventsListElement = tripListElement.querySelector(`.trip-events__list`);
 
-for (let i = 0; i < TRIP_COUNT; i++) {
-  render(tripEventsListElement, createTripEventTemplate(), `beforeend`);
+render(tripEventsListElement, createTripEventEditTemplate(trips[0]), `beforeend`);
+
+for (let i = 1; i < TRIP_COUNT; i++) {
+  render(tripEventsListElement, createTripEventTemplate(trips[i]), `beforeend`);
 }

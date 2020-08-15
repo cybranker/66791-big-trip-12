@@ -1,3 +1,5 @@
+import {generateEventType} from "./event-type.js";
+
 const getRandomInteger = (a = 0, b = 1) => {
   const lower = Math.ceil(Math.min(a, b));
   const upper = Math.floor(Math.max(a, b));
@@ -19,29 +21,24 @@ const getArrayRandomLength = (arr, len) => {
   return newArr;
 };
 
-const generateEvent = () => {
-  const events = {
-    transport: [
-      `Taxi`,
-      `Bus`,
-      `Train`,
-      `Ship`,
-      `Transport`,
-      `Drive`,
-      `Flight`
-    ],
-    stop: [
-      `Check`,
-      `Sightseeing`,
-      `Restaurant`
-    ]
-  };
+const generateEvent = (events) => {
   const eventsKeys = Object.keys(events);
 
   const randomKey = getRandomInteger(0, eventsKeys.length - 1);
   const randomIndex = getRandomInteger(0, events[eventsKeys[randomKey]].length - 1);
+  const randomEvent = events[eventsKeys[randomKey]][randomIndex];
 
-  return `${events[eventsKeys[randomKey]][randomIndex]} ${eventsKeys[randomKey] === `transport` ? `to` : `in`}`;
+  let action = `to`;
+
+  if (eventsKeys[randomKey] === `activity`) {
+    if (randomEvent !== `Check-in`) {
+      action = `in`;
+    } else {
+      action = ``;
+    }
+  }
+
+  return `${randomEvent} ${action}`;
 };
 
 const generateCity = () => {
@@ -66,28 +63,30 @@ const generateOffers = () => {
     return [];
   }
 
-  const offers = [
-    {
+  const offersMap = {
+    luggage: {
       name: `Add luggage`,
       price: 30
     },
-    {
-      name: `Switch to comfort class`,
+    comfort: {
+      name: `Switch to comfort`,
       price: 100
     },
-    {
+    meal: {
       name: `Add meal`,
       price: 15
     },
-    {
+    seats: {
       name: `Choose seats`,
       price: 5
     },
-    {
+    train: {
       name: `Travel by train`,
       price: 40
     }
-  ];
+  };
+
+  const offers = Object.entries(offersMap);
 
   return getArrayRandomLength(offers, getRandomInteger(0, offers.length - 1));
 };
@@ -142,30 +141,21 @@ const generateTime = (date) => {
   return new Date(currentDate);
 };
 
-const humanizeTaskDate = (date) => date
-  .toLocaleString(`en-GB`, {
-    year: `numeric`,
-    month: `numeric`,
-    day: `numeric`,
-    hour: `2-digit`,
-    minute: `2-digit`
-  });
-
 const generateTrip = () => {
   const timeIn = generateTime();
   const timeOut = generateTime(new Date(timeIn));
 
   return {
-    event: generateEvent(),
+    event: generateEvent(generateEventType()),
     city: generateCity(),
-    offers: generateOffers(),
+    offers: Object.fromEntries(generateOffers()),
     description: generateDescription(),
     photos: generatePhotos(getRandomInteger(1, 6)),
-    timeIn: humanizeTaskDate(timeIn),
-    timeOut: humanizeTaskDate(timeOut),
+    timeIn,
+    timeOut,
     price: getRandomInteger(10, 1000),
     isFavorite: Boolean(getRandomInteger(0, 1))
-  }
+  };
 };
 
 export {generateTrip};
