@@ -1,19 +1,6 @@
+import {getEventWithoutActionName, humanizeTaskDate} from "../utils.js";
+
 const MAX_RENDER_OFFERS_TRIP = 3;
-
-const getEventWithoutActionName = (type) => {
-  let eventType = type.split(` `)[0].toLowerCase();
-
-  return eventType;
-};
-
-const humanizeTaskDate = (date) => date
-  .toLocaleString(`en-GB`, {
-    year: `numeric`,
-    month: `numeric`,
-    day: `numeric`,
-    hour: `2-digit`,
-    minute: `2-digit`
-  });
 
 const renderOffersTrip = (ofrs) => {
   const ofrsKeys = Object.keys(ofrs);
@@ -34,8 +21,8 @@ const renderOffersTrip = (ofrs) => {
 const createTripEventTemplate = (trip) => {
   const {event, city, timeIn, timeOut, price, offers} = trip;
 
-  const tripTimeIn = humanizeTaskDate(timeIn).split(`, `)[1];
-  const tripTimeOut = humanizeTaskDate(timeOut).split(`, `)[1];
+  const tripTimeIn = humanizeTaskDate(timeIn, `numeric`).split(`, `)[1];
+  const tripTimeOut = humanizeTaskDate(timeOut, `numeric`).split(`, `)[1];
 
   return `<li class="trip-events__item">
       <div class="event">

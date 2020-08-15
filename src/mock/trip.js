@@ -1,25 +1,6 @@
 import {generateEventType} from "./event-type.js";
-
-const getRandomInteger = (a = 0, b = 1) => {
-  const lower = Math.ceil(Math.min(a, b));
-  const upper = Math.floor(Math.max(a, b));
-
-  return Math.floor(lower + Math.random() * (upper - lower + 1));
-};
-
-const getArrayRandomLength = (arr, len) => {
-  const newArr = [];
-  let value;
-
-  for (let i = 0; i <= len; i++) {
-    value = arr[getRandomInteger(0, arr.length - 1)];
-
-    newArr.push(value);
-    arr = arr.filter((it) => it !== value);
-  }
-
-  return newArr;
-};
+import {getRandomInteger, getArrayRandomLength} from "../utils.js";
+import {CITIES, SENTENCE, OFFERS_MAP} from "../const.js";
 
 const generateEvent = (events) => {
   const eventsKeys = Object.keys(events);
@@ -41,73 +22,25 @@ const generateEvent = (events) => {
   return `${randomEvent} ${action}`;
 };
 
-const generateCity = () => {
-  const cities = [
-    `Amsterdam`,
-    `Geneva`,
-    `Chamonix`,
-    `Saint Petersburg`,
-    `Paris`,
-    `New York`
-  ];
-
+const generateCity = (cities) => {
   const randomIndex = getRandomInteger(0, cities.length - 1);
 
   return cities[randomIndex];
 };
 
-const generateOffers = () => {
+const generateOffers = (offersMap) => {
   const isOffers = Boolean(getRandomInteger(0, 1));
 
   if (!isOffers) {
     return [];
   }
 
-  const offersMap = {
-    luggage: {
-      name: `Add luggage`,
-      price: 30
-    },
-    comfort: {
-      name: `Switch to comfort`,
-      price: 100
-    },
-    meal: {
-      name: `Add meal`,
-      price: 15
-    },
-    seats: {
-      name: `Choose seats`,
-      price: 5
-    },
-    train: {
-      name: `Travel by train`,
-      price: 40
-    }
-  };
-
   const offers = Object.entries(offersMap);
 
   return getArrayRandomLength(offers, getRandomInteger(0, offers.length - 1));
 };
 
-const generateDescription = () => {
-  const sentence = [
-    `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
-    `Cras aliquet varius magna, non porta ligula feugiat eget.`,
-    `Fusce tristique felis at fermentum pharetra.`,
-    `Aliquam id orci ut lectus varius viverra.`,
-    `Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.`,
-    `Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum.`,
-    `Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui.`,
-    `Sed sed nisi sed augue convallis suscipit in sed felis.`,
-    `Aliquam erat volutpat.`,
-    `Nunc fermentum tortor ac porta dapibus.`,
-    `In rutrum ac purus sit amet tempus.`
-  ];
-
-  return getArrayRandomLength(sentence, getRandomInteger(0, 4)).join(` `);
-};
+const generateDescription = (sentence) => getArrayRandomLength(sentence, getRandomInteger(0, 4)).join(` `);
 
 const generatePhotos = (quantity = 1) => {
   const arr = [];
@@ -147,9 +80,9 @@ const generateTrip = () => {
 
   return {
     event: generateEvent(generateEventType()),
-    city: generateCity(),
-    offers: Object.fromEntries(generateOffers()),
-    description: generateDescription(),
+    city: generateCity(CITIES),
+    offers: Object.fromEntries(generateOffers(OFFERS_MAP)),
+    description: generateDescription(SENTENCE),
     photos: generatePhotos(getRandomInteger(1, 6)),
     timeIn,
     timeOut,

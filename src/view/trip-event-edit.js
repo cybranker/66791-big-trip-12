@@ -1,23 +1,6 @@
 import {generateEventType} from "../mock/event-type.js";
-
-const upperFirst = (string) => {
-  return string ? string.charAt(0).toUpperCase() + string.slice(1) : ``;
-};
-
-const getEventWithoutActionName = (type) => {
-  let eventType = type.split(` `)[0].toLowerCase();
-
-  return eventType;
-};
-
-const humanizeTaskDate = (date) => date
-  .toLocaleString(`en-GB`, {
-    year: `2-digit`,
-    month: `numeric`,
-    day: `numeric`,
-    hour: `2-digit`,
-    minute: `2-digit`
-  });
+import {OFFERS_MAP} from "../const.js";
+import {upperFirst, getEventWithoutActionName, humanizeTaskDate} from "../utils.js";
 
 const createEventTypeGroupsTemplate = (events, eventCheck) => {
   return Object.entries(events).map(([groupName, eventTypes]) => {
@@ -46,39 +29,14 @@ const createFavoriteTemplate = (favorite) => favorite
   </label>`
   : ``;
 
-const createEventOffersTemplate = (offersChecked) => {
-  const offers = {
-    luggage: {
-      name: `Add luggage`,
-      price: 30
-    },
-    comfort: {
-      name: `Switch to comfort class`,
-      price: 100
-    },
-    meal: {
-      name: `Add meal`,
-      price: 15
-    },
-    seats: {
-      name: `Choose seats`,
-      price: 5
-    },
-    train: {
-      name: `Travel by train`,
-      price: 40
-    }
-  };
-
-  return Object.entries(offers).map(([name, offer]) => `<div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${name}-1" type="checkbox" name="event-offer-${name}" ${name in offersChecked ? `checked` : ``}>
-      <label class="event__offer-label" for="event-offer-${name}-1">
-        <span class="event__offer-title">${offer.name}</span>
-        &plus;
-        &euro;&nbsp;<span class="event__offer-price">${offer.price}</span>
-      </label>
-    </div>`).join(``);
-};
+const createEventOffersTemplate = (offers, offersChecked) => Object.entries(offers).map(([name, offer]) => `<div class="event__offer-selector">
+    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${name}-1" type="checkbox" name="event-offer-${name}" ${name in offersChecked ? `checked` : ``}>
+    <label class="event__offer-label" for="event-offer-${name}-1">
+      <span class="event__offer-title">${offer.name}</span>
+      &plus;
+      &euro;&nbsp;<span class="event__offer-price">${offer.price}</span>
+    </label>
+  </div>`).join(``);
 
 const createEventPhotosTemplate = (photos) => photos.map((photo) => `<img class="event__photo" src="${photo}" alt="Event photo">`).join(``);
 
@@ -97,7 +55,7 @@ const createTripEventEditTemplate = (trip = {}) => {
 
   const eventTypeGroupsTemplate = createEventTypeGroupsTemplate(generateEventType(), getEventWithoutActionName(event));
   const favoriteTemplate = createFavoriteTemplate(isFavorite);
-  const offersTemplate = createEventOffersTemplate(offers);
+  const offersTemplate = createEventOffersTemplate(OFFERS_MAP, offers);
   const photosTemplate = createEventPhotosTemplate(photos);
 
   return `<li class="trip-events__item">
@@ -131,12 +89,12 @@ const createTripEventEditTemplate = (trip = {}) => {
           <label class="visually-hidden" for="event-start-time-1">
             From
           </label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${humanizeTaskDate(timeIn).split(`, `).join(` `)}">
+          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${humanizeTaskDate(timeIn, `2-digit`).split(`, `).join(` `)}">
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">
             To
           </label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${humanizeTaskDate(timeOut).split(`, `).join(` `)}">
+          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${humanizeTaskDate(timeOut, `2-digit`).split(`, `).join(` `)}">
         </div>
 
         <div class="event__field-group  event__field-group--price">
