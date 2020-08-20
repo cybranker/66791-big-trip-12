@@ -2,13 +2,14 @@ import TripInfoView from "./view/trip-info.js";
 import TripMenuView from "./view/trip-menu.js";
 import TripFilterView from "./view/trip-filters.js";
 import TripSortView from "./view/trip-sort.js";
-import {createTripEventEditTemplate} from "./view/trip-event-edit.js";
+import TripEventEditView from "./view/trip-event-edit.js";
 import TripListView from "./view/trip-list.js";
 import TripDayView from "./view/trip-day.js";
-import {createTripEventTemplate} from "./view/trip-event.js";
+import TripEventView from "./view/trip-event.js";
 import {generateTrip} from "./mock/trip.js";
 import {generateFilter} from "./mock/filter.js";
-import {renderTemplate, renderElement, RenderPosition} from "./utils.js";
+import {renderElement, RenderPosition} from "./utils.js";
+import TripEventEdit from "./view/trip-event-edit";
 
 const TRIP_COUNT = 21;
 
@@ -40,7 +41,7 @@ renderElement(tripListElement, new TripDayView(0, trips[0].timeIn).element, Rend
 
 let tripEventsListElement = tripListElement.querySelectorAll(`.trip-events__list`)[0];
 
-renderTemplate(tripEventsListElement, createTripEventEditTemplate(trips[0]), `beforeend`);
+renderElement(tripEventsListElement, new TripEventEditView(trips[0]).element, RenderPosition.BEFOREEND);
 
 let tripDay = trips[1].timeIn.toDateString();
 let tripDayCount = 1;
@@ -54,5 +55,5 @@ for (let i = 1; i < TRIP_COUNT; i++) {
   }
 
   tripEventsListElement = tripListElement.querySelectorAll(`.trip-events__list`)[tripDayCount];
-  renderTemplate(tripEventsListElement, createTripEventTemplate(trips[i]), `beforeend`);
+  renderElement(tripEventsListElement, new TripEventView(trips[i]).element, RenderPosition.BEFOREEND);
 }
