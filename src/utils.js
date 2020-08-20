@@ -40,4 +40,11 @@ const humanizeTaskDate = (date, yearType) => date
 
 const dateTimeFormat = (date) => `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
 
-export {getRandomInteger, getArrayRandomLength, getEventWithoutActionName, upperFirst, humanizeTaskDate, dateTimeFormat};
+export {
+  getRandomInteger,
+  getArrayRandomLength,
+  getEventWithoutActionName,
+  upperFirst,
+  humanizeTaskDate,
+  dateTimeFormat
+};

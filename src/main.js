@@ -7,6 +7,7 @@ import {createTripListTemplate} from "./view/trip-list.js";
 import {createTripDayTemplate} from "./view/trip-day.js";
 import {createTripEventTemplate} from "./view/trip-event.js";
 import {generateTrip} from "./mock/trip.js";
+import {generateFilter} from "./mock/filter.js";
 
 const TRIP_COUNT = 21;
 
@@ -19,6 +20,7 @@ const trips = new Array(TRIP_COUNT)
 
     return a - b;
   });
+const filters = generateFilter();
 
 const render = (container, template, place) => container.insertAdjacentHTML(place, template);
 
@@ -28,7 +30,7 @@ const siteMainElement = document.querySelector(`.trip-events`);
 
 render(siteHeaderElement, createTripInfoTemplate(), `afterbegin`);
 render(tripControlsElement.children[0], createTripMenuTemplate(), `afterend`);
-render(tripControlsElement, createTripFiltersTemplate(), `beforeend`);
+render(tripControlsElement, createTripFiltersTemplate(filters), `beforeend`);
 
 render(siteMainElement, createTripSortTemplate(), `beforeend`);
 render(siteMainElement, createTripListTemplate(), `beforeend`);
