@@ -4,7 +4,7 @@ const RenderPosition = {
   AFTEREND: `afterend`
 };
 
-const renderElement = (container, element, place) => {
+const render = (container, element, place) => {
   switch (place) {
     case RenderPosition.AFTERBEGIN:
       container.prepend(element);
@@ -72,7 +72,7 @@ const dateTimeFormat = (date) => `${date.getFullYear()}-${date.getMonth()}-${dat
 
 export {
   RenderPosition,
-  renderElement,
+  render,
   renderTemplate,
   createElement,
   getRandomInteger,
