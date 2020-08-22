@@ -6,6 +6,7 @@ import TripEventEditView from "./view/trip-event-edit.js";
 import TripListView from "./view/trip-list.js";
 import TripDayView from "./view/trip-day.js";
 import TripEventView from "./view/trip-event.js";
+import NoTripView from "./view/no-trips.js";
 import {generateTrip} from "./mock/trip.js";
 import {generateFilter} from "./mock/filter.js";
 import {render, RenderPosition} from "./utils.js";
@@ -45,13 +46,23 @@ const renderTrip = (tripEventsListElement, trip) => {
     tripEventsListElement.replaceChild(tripEventComponent.element, tripEventEditComponent.element);
   };
 
+  const onEscKeyDown = (evt) => {
+    if (evt.key === `Escape` || evt.key === `Esc`) {
+      evt.preventDefault();
+      replaceFormToTrip();
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    }
+  };
+
   tripEventComponent.element.querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
     replaceTripToForm();
+    document.addEventListener(`keydown`, onEscKeyDown);
   });
 
   tripEventEditComponent.element.querySelector(`form`).addEventListener(`submit`, (evt) => {
     evt.preventDefault();
     replaceFormToTrip();
+    document.removeEventListener(`keydown`, onEscKeyDown);
   });
 
   render(tripEventsListElement, tripEventComponent.element, RenderPosition.BEFOREEND);
@@ -61,25 +72,29 @@ render(siteHeaderElement, new TripInfoView().element, RenderPosition.AFTERBEGIN)
 render(tripControlsElement.children[0], new TripMenuView().element, RenderPosition.AFTEREND);
 render(tripControlsElement, new TripFilterView(filters).element, RenderPosition.BEFOREEND);
 
-render(siteMainElement, new TripSortView().element, RenderPosition.BEFOREEND);
-render(siteMainElement, new TripListView().element, RenderPosition.BEFOREEND);
+if (trips.length === 0) {
+  render(siteMainElement, new NoTripView().element, RenderPosition.BEFOREEND);
+} else {
+  render(siteMainElement, new TripSortView().element, RenderPosition.BEFOREEND);
+  render(siteMainElement, new TripListView().element, RenderPosition.BEFOREEND);
 
-const tripListElement = siteMainElement.querySelector(`.trip-days`);
+  const tripListElement = siteMainElement.querySelector(`.trip-days`);
 
-let tripDay = trips[0].timeIn.toDateString();
-let tripDayCount = 0;
-renderTripDay(tripListElement, tripDayCount, trips[0].timeIn);
+  let tripDay = trips[0].timeIn.toDateString();
+  let tripDayCount = 0;
+  renderTripDay(tripListElement, tripDayCount, trips[0].timeIn);
 
-let tripEventsListElement = tripListElement.querySelectorAll(`.trip-events__list`)[tripDayCount];
-renderTrip(tripEventsListElement, trips[0]);
+  let tripEventsListElement = tripListElement.querySelectorAll(`.trip-events__list`)[tripDayCount];
+  renderTrip(tripEventsListElement, trips[0]);
 
-for (let i = 1; i < TRIP_COUNT; i++) {
-  if (tripDay !== trips[i].timeIn.toDateString()) {
-    tripDay = trips[i].timeIn.toDateString();
-    tripDayCount++;
-    renderTripDay(tripListElement, tripDayCount, trips[i].timeIn);
+  for (let i = 1; i < TRIP_COUNT; i++) {
+    if (tripDay !== trips[i].timeIn.toDateString()) {
+      tripDay = trips[i].timeIn.toDateString();
+      tripDayCount++;
+      renderTripDay(tripListElement, tripDayCount, trips[i].timeIn);
+    }
+
+    tripEventsListElement = tripListElement.querySelectorAll(`.trip-events__list`)[tripDayCount];
+    renderTrip(tripEventsListElement, trips[i]);
   }
-
-  tripEventsListElement = tripListElement.querySelectorAll(`.trip-events__list`)[tripDayCount];
-  renderTrip(tripEventsListElement, trips[i]);
 }
