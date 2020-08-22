@@ -68,33 +68,38 @@ const renderTrip = (tripEventsListElement, trip) => {
   render(tripEventsListElement, tripEventComponent.element, RenderPosition.BEFOREEND);
 };
 
+const renderEvents = (eventsContainer, eventsTrips) => {
+  if (eventsTrips.length === 0) {
+    render(eventsContainer, new NoTripView().element, RenderPosition.BEFOREEND);
+    return;
+  }
+
+  render(eventsContainer, new TripSortView().element, RenderPosition.BEFOREEND);
+  render(eventsContainer, new TripListView().element, RenderPosition.BEFOREEND);
+
+  const tripListElement = siteMainElement.querySelector(`.trip-days`);
+
+  let tripDay = eventsTrips[0].timeIn.toDateString();
+  let tripDayCount = 0;
+  renderTripDay(tripListElement, tripDayCount, eventsTrips[0].timeIn);
+
+  let tripEventsListElement = tripListElement.querySelectorAll(`.trip-events__list`)[tripDayCount];
+  renderTrip(tripEventsListElement, eventsTrips[0]);
+
+  for (let i = 1; i < TRIP_COUNT; i++) {
+    if (tripDay !== eventsTrips[i].timeIn.toDateString()) {
+      tripDay = eventsTrips[i].timeIn.toDateString();
+      tripDayCount++;
+      renderTripDay(tripListElement, tripDayCount, eventsTrips[i].timeIn);
+    }
+
+    tripEventsListElement = tripListElement.querySelectorAll(`.trip-events__list`)[tripDayCount];
+    renderTrip(tripEventsListElement, eventsTrips[i]);
+  }
+};
+
 render(siteHeaderElement, new TripInfoView().element, RenderPosition.AFTERBEGIN);
 render(tripControlsElement.children[0], new TripMenuView().element, RenderPosition.AFTEREND);
 render(tripControlsElement, new TripFilterView(filters).element, RenderPosition.BEFOREEND);
 
-if (trips.length === 0) {
-  render(siteMainElement, new NoTripView().element, RenderPosition.BEFOREEND);
-} else {
-  render(siteMainElement, new TripSortView().element, RenderPosition.BEFOREEND);
-  render(siteMainElement, new TripListView().element, RenderPosition.BEFOREEND);
-
-  const tripListElement = siteMainElement.querySelector(`.trip-days`);
-
-  let tripDay = trips[0].timeIn.toDateString();
-  let tripDayCount = 0;
-  renderTripDay(tripListElement, tripDayCount, trips[0].timeIn);
-
-  let tripEventsListElement = tripListElement.querySelectorAll(`.trip-events__list`)[tripDayCount];
-  renderTrip(tripEventsListElement, trips[0]);
-
-  for (let i = 1; i < TRIP_COUNT; i++) {
-    if (tripDay !== trips[i].timeIn.toDateString()) {
-      tripDay = trips[i].timeIn.toDateString();
-      tripDayCount++;
-      renderTripDay(tripListElement, tripDayCount, trips[i].timeIn);
-    }
-
-    tripEventsListElement = tripListElement.querySelectorAll(`.trip-events__list`)[tripDayCount];
-    renderTrip(tripEventsListElement, trips[i]);
-  }
-}
+renderEvents(siteMainElement, trips);
