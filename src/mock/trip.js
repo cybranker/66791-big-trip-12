@@ -1,5 +1,5 @@
 import {generateEventType} from "./event-type.js";
-import {getRandomInteger, getArrayRandomLength} from "../utils.js";
+import {getRandomInteger, getArrayRandomLength} from "../utils/common.js";
 import {CITIES, SENTENCE, OFFERS_MAP} from "../const.js";
 
 const generateEvent = (events) => {

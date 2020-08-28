@@ -1,5 +1,5 @@
 import AbstractView from "./abstract.js";
-import {getEventWithoutActionName, humanizeTaskDate} from "../utils.js";
+import {getEventWithoutActionName, humanizeTaskDate} from "../utils/trip.js";
 
 const MAX_RENDER_OFFERS_TRIP = 3;
 

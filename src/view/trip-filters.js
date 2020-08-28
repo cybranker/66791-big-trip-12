@@ -1,5 +1,5 @@
 import AbstractView from "./abstract.js";
-import {upperFirst} from "../utils.js";
+import {upperFirst} from "../utils/trip.js";
 
 class Filter extends AbstractView {
   constructor(filters) {

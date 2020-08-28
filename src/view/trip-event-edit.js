@@ -1,7 +1,7 @@
 import AbstractView from "./abstract.js";
 import {generateEventType} from "../mock/event-type.js";
 import {OFFERS_MAP} from "../const.js";
-import {upperFirst, getEventWithoutActionName, humanizeTaskDate} from "../utils.js";
+import {upperFirst, getEventWithoutActionName, humanizeTaskDate} from "../utils/trip.js";
 
 const BLANK_TRIP = {
   event: `Taxi to`,

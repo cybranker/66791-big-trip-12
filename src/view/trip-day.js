@@ -1,5 +1,5 @@
 import AbstractView from "./abstract.js";
-import {dateTimeFormat} from "../utils.js";
+import {dateTimeFormat} from "../utils/trip.js";
 
 class TripDay extends AbstractView {
   constructor(count, date) {
