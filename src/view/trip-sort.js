@@ -1,10 +1,6 @@
-import {createElement} from "../utils.js";
+import AbstractView from "./abstract.js";
 
-class TripSort {
-  constructor() {
-    this._element = null;
-  }
-
+class TripSort extends AbstractView {
   _createTripSortTemplate() {
     return `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
       <span class="trip-sort__item  trip-sort__item--day">Day</span>
@@ -38,16 +34,8 @@ class TripSort {
     </form>`;
   }
 
-  get element() {
-    if (!this._element) {
-      this._element = createElement(this._createTripSortTemplate());
-    }
-
-    return this._element;
-  }
-
-  set element(value) {
-    this._element = value;
+  get _template() {
+    return this._createTripSortTemplate();
   }
 }
 

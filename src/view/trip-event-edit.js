@@ -1,6 +1,7 @@
+import AbstractView from "./abstract.js";
 import {generateEventType} from "../mock/event-type.js";
 import {OFFERS_MAP} from "../const.js";
-import {upperFirst, getEventWithoutActionName, humanizeTaskDate, createElement} from "../utils.js";
+import {upperFirst, getEventWithoutActionName, humanizeTaskDate} from "../utils.js";
 
 const BLANK_TRIP = {
   event: `Taxi to`,
@@ -14,10 +15,10 @@ const BLANK_TRIP = {
   isFavorite: false
 };
 
-class TripEventEdit {
+class TripEventEdit extends AbstractView {
   constructor(trip = BLANK_TRIP) {
+    super();
     this._trip = trip;
-    this._element = null;
   }
 
   _createEventTypeGroupsTemplate(events, eventCheck) {
@@ -151,16 +152,8 @@ class TripEventEdit {
     </li>`;
   }
 
-  get element() {
-    if (!this._element) {
-      this._element = createElement(this._createTripEventEditTemplate(this._trip));
-    }
-
-    return this._element;
-  }
-
-  set element(value) {
-    this._element = value;
+  get _template() {
+    return this._createTripEventEditTemplate(this._trip);
   }
 }
 

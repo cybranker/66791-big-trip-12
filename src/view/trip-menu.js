@@ -1,10 +1,6 @@
-import {createElement} from "../utils.js";
+import AbstractView from "./abstract.js";
 
-class TripMenu {
-  constructor() {
-    this._element = null;
-  }
-
+class TripMenu extends AbstractView {
   _createTripMenuTemplate() {
     return `<nav class="trip-controls__trip-tabs  trip-tabs">
       <a class="trip-tabs__btn  trip-tabs__btn--active" href="#">Table</a>
@@ -12,16 +8,8 @@ class TripMenu {
     </nav>`;
   }
 
-  get element() {
-    if (!this._element) {
-      this._element = createElement(this._createTripMenuTemplate());
-    }
-
-    return this._element;
-  }
-
-  set element(value) {
-    this._element = value;
+  get _template() {
+    return this._createTripMenuTemplate();
   }
 }
 

@@ -1,9 +1,10 @@
-import {upperFirst, createElement} from "../utils.js";
+import AbstractView from "./abstract.js";
+import {upperFirst} from "../utils.js";
 
-class Filter {
+class Filter extends AbstractView {
   constructor(filters) {
+    super();
     this._filters = filters;
-    this._element = null;
   }
 
   _createTripFilterItemTemplate(filter, isChecked) {
@@ -27,16 +28,8 @@ class Filter {
     </form>`;
   }
 
-  get element() {
-    if (!this._element) {
-      this._element = createElement(this._createTripFiltersTemplate(this._filters));
-    }
-
-    return this._element;
-  }
-
-  set element(value) {
-    this._element = value;
+  get _template() {
+    return this._createTripFiltersTemplate(this._filters);
   }
 }
 

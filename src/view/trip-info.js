@@ -1,10 +1,6 @@
-import {createElement} from "../utils.js";
+import AbstractView from "./abstract.js";
 
-class TripInfo {
-  constructor() {
-    this._element = null;
-  }
-
+class TripInfo extends AbstractView {
   _createTripInfoTemplate() {
     return `<section class="trip-main__trip-info  trip-info">
       <div class="trip-info__main">
@@ -19,16 +15,8 @@ class TripInfo {
     </section>`;
   }
 
-  get element() {
-    if (!this._element) {
-      this._element = createElement(this._createTripInfoTemplate());
-    }
-
-    return this._element;
-  }
-
-  set element(value) {
-    this._element = value;
+  get _template() {
+    return this._createTripInfoTemplate();
   }
 }
 

@@ -1,24 +1,12 @@
-import {createElement} from "../utils.js";
+import AbstractView from "./abstract.js";
 
-class NoTrip {
-  constructor() {
-    this._element = null;
-  }
-
+class NoTrip extends AbstractView {
   _createNoTripTemplate() {
     return `<p class="trip-events__msg">Click New Event to create your first point</p>`;
   }
 
-  get element() {
-    if (!this._element) {
-      this._element = createElement(this._createNoTripTemplate());
-    }
-
-    return this._element;
-  }
-
-  set element(value) {
-    this._element = value;
+  get _template() {
+    return this._createNoTripTemplate();
   }
 }
 
