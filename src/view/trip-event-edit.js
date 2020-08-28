@@ -19,6 +19,8 @@ class TripEventEdit extends AbstractView {
   constructor(trip = BLANK_TRIP) {
     super();
     this._trip = trip;
+
+    this._formSubmitHandler = this._formSubmitHandler.bind(this);
   }
 
   _createEventTypeGroupsTemplate(events, eventCheck) {
@@ -152,8 +154,18 @@ class TripEventEdit extends AbstractView {
     </li>`;
   }
 
+  _formSubmitHandler(evt) {
+    evt.preventDefault();
+    this._callback.formSubmit();
+  }
+
   get _template() {
     return this._createTripEventEditTemplate(this._trip);
+  }
+
+  set formSubmitHandler(callback) {
+    this._callback.formSubmit = callback;
+    this.element.querySelector(`form`).addEventListener(`submit`, this._formSubmitHandler);
   }
 }
 

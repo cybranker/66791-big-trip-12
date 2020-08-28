@@ -7,6 +7,8 @@ class TripEvent extends AbstractView {
   constructor(trip) {
     super();
     this._trip = trip;
+
+    this._editClickHandler = this._editClickHandler.bind(this);
   }
 
   _renderOffersTrip(ofrs) {
@@ -63,8 +65,18 @@ class TripEvent extends AbstractView {
     </li>`;
   }
 
+  _editClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.editClick();
+  }
+
   get _template() {
     return this._createTripEventTemplate(this._trip);
+  }
+
+  set editClickHandler(callback) {
+    this._callback.editClick = callback;
+    this.element.querySelector(`.event__rollup-btn`).addEventListener(`click`, this._editClickHandler);
   }
 }
 

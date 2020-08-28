@@ -54,16 +54,15 @@ const renderTrip = (tripEventsListElement, trip) => {
     }
   };
 
-  tripEventComponent.element.querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
+  tripEventComponent.editClickHandler = () => {
     replaceTripToForm();
     document.addEventListener(`keydown`, onEscKeyDown);
-  });
+  };
 
-  tripEventEditComponent.element.querySelector(`form`).addEventListener(`submit`, (evt) => {
-    evt.preventDefault();
+  tripEventEditComponent.formSubmitHandler = () => {
     replaceFormToTrip();
     document.removeEventListener(`keydown`, onEscKeyDown);
-  });
+  };
 
   render(tripEventsListElement, tripEventComponent.element, RenderPosition.BEFOREEND);
 };
