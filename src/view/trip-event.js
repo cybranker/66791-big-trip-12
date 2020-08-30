@@ -1,11 +1,14 @@
-import {getEventWithoutActionName, humanizeTaskDate, createElement} from "../utils.js";
+import AbstractView from "./abstract.js";
+import {getEventWithoutActionName, humanizeTaskDate} from "../utils/trip.js";
 
 const MAX_RENDER_OFFERS_TRIP = 3;
 
-class TripEvent {
+class TripEvent extends AbstractView {
   constructor(trip) {
+    super();
     this._trip = trip;
-    this._element = null;
+
+    this._editClickHandler = this._editClickHandler.bind(this);
   }
 
   _renderOffersTrip(ofrs) {
@@ -62,16 +65,18 @@ class TripEvent {
     </li>`;
   }
 
-  get element() {
-    if (!this._element) {
-      this._element = createElement(this._createTripEventTemplate(this._trip));
-    }
-
-    return this._element;
+  _editClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.editClick();
   }
 
-  set element(value) {
-    this._element = value;
+  get _template() {
+    return this._createTripEventTemplate(this._trip);
+  }
+
+  set editClickHandler(callback) {
+    this._callback.editClick = callback;
+    this.element.querySelector(`.event__rollup-btn`).addEventListener(`click`, this._editClickHandler);
   }
 }
 

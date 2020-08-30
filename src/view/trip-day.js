@@ -1,10 +1,11 @@
-import {dateTimeFormat, createElement} from "../utils.js";
+import AbstractView from "./abstract.js";
+import {dateTimeFormat} from "../utils/trip.js";
 
-class TripDay {
+class TripDay extends AbstractView {
   constructor(count, date) {
+    super();
     this._count = count;
     this._date = date;
-    this._element = null;
   }
 
   _createTripDayTemplate(count, date) {
@@ -21,16 +22,8 @@ class TripDay {
       </li>`;
   }
 
-  get element() {
-    if (!this._element) {
-      this._element = createElement(this._createTripDayTemplate(this._count, this._date));
-    }
-
-    return this._element;
-  }
-
-  set element(value) {
-    this._element = value;
+  get _template() {
+    return this._createTripDayTemplate(this._count, this._date);
   }
 }
 
