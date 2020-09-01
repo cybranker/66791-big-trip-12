@@ -19,9 +19,25 @@ const humanizeTaskDate = (date, yearType) => date
 
 const dateTimeFormat = (date) => `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
 
+const sortTripTime = (tripA, tripB) => {
+  const tripATime = new Date(tripA.timeOut - tripA.timeIn);
+  const tripBTime = new Date(tripB.timeOut - tripB.timeIn);
+
+  return tripBTime - tripATime;
+};
+
+const sortTripPrice = (tripA, tripB) => {
+  const tripAPrice = tripA.price;
+  const tripBPrice = tripB.price;
+
+  return tripBPrice - tripAPrice;
+};
+
 export {
   getEventWithoutActionName,
   upperFirst,
   humanizeTaskDate,
-  dateTimeFormat
+  dateTimeFormat,
+  sortTripTime,
+  sortTripPrice
 };

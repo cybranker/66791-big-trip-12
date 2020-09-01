@@ -1,11 +1,13 @@
 import AbstractView from "./abstract.js";
 import {dateTimeFormat} from "../utils/trip.js";
+import {SortType} from "../const.js";
 
 class TripDay extends AbstractView {
-  constructor(count, date) {
+  constructor(count, date, sortType) {
     super();
     this._count = count;
     this._date = date;
+    this._sortType = sortType;
   }
 
   _createTripDayTemplate(count, date) {
@@ -14,8 +16,8 @@ class TripDay extends AbstractView {
 
     return `<li class="trip-days__item  day">
         <div class="day__info">
-          <span class="day__counter">${count}</span>
-          <time class="day__date" datetime="${dateTimeFormat(date)}">${month} ${day}</time>
+          ${this._sortType === SortType.DEFAULT ? `<span class="day__counter">${count}</span>
+          <time class="day__date" datetime="${dateTimeFormat(date)}">${month} ${day}</time>` : ``}
         </div>
 
         <ul class="trip-events__list"></ul>

@@ -44,4 +44,15 @@ const OFFERS_MAP = {
   }
 };
 
-export {CITIES, SENTENCE, OFFERS_MAP};
+const SortType = {
+  DEFAULT: `sort-event`,
+  TIME: `sort-time`,
+  PRICE: `sort-price`
+};
+
+export {
+  CITIES,
+  SENTENCE,
+  OFFERS_MAP,
+  SortType
+};
