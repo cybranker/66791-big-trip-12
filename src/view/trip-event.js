@@ -1,5 +1,6 @@
 import AbstractView from "./abstract.js";
 import {getEventWithoutActionName, humanizeTaskDate} from "../utils/trip.js";
+import {addZerosNumber} from "../utils/common.js";
 
 const MAX_RENDER_OFFERS_TRIP = 3;
 
@@ -27,6 +28,31 @@ class TripEvent extends AbstractView {
     return offersTripTemplate;
   }
 
+  _renderDurationStay(timeIn, timeOut) {
+    let diffInMilliSeconds = Math.abs(timeOut - timeIn) / 1000;
+
+    const days = Math.floor(diffInMilliSeconds / 86400);
+    diffInMilliSeconds -= days * 86400;
+
+    const hours = Math.floor(diffInMilliSeconds / 3600) % 24;
+    diffInMilliSeconds -= hours * 3600;
+
+    const minutes = Math.floor(diffInMilliSeconds / 60) % 60;
+    diffInMilliSeconds -= minutes * 60;
+
+    let durationStay = ``;
+
+    if (days > 0) {
+      durationStay = `${addZerosNumber(days)}D ${addZerosNumber(hours)}H ${addZerosNumber(minutes)}M`;
+    } else if (days === 0 && hours > 0) {
+      durationStay = `${addZerosNumber(hours)}H ${addZerosNumber(minutes)}M`;
+    } else {
+      durationStay = `${addZerosNumber(minutes)}M`;
+    }
+
+    return durationStay;
+  }
+
   _createTripEventTemplate(trip) {
     const {event, city, timeIn, timeOut, price, offers} = trip;
 
@@ -46,7 +72,7 @@ class TripEvent extends AbstractView {
             &mdash;
             <time class="event__end-time" datetime="2019-03-18T11:00">${tripTimeOut}</time>
           </p>
-          <p class="event__duration">30M</p>
+          <p class="event__duration">${this._renderDurationStay(timeIn, timeOut)}</p>
         </div>
 
         <p class="event__price">

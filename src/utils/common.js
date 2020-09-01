@@ -19,7 +19,18 @@ const getArrayRandomLength = (arr, len) => {
   return newArr;
 };
 
+const addZerosNumber = (number, needLength = 2) => {
+  number = String(number);
+
+  while (number.length < needLength) {
+    number = `0${number}`;
+  }
+
+  return number;
+};
+
 export {
   getRandomInteger,
-  getArrayRandomLength
+  getArrayRandomLength,
+  addZerosNumber
 };
