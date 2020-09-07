@@ -3,6 +3,7 @@ import TripListView from "../view/trip-list.js";
 import TripDayView from "../view/trip-day.js";
 import NoTripView from "../view/no-trips.js";
 import WaypointPresenter from "./waypoint.js";
+import {updateItem} from "../utils/common.js";
 import {render, RenderPosition, remove} from "../utils/render.js";
 import {sortTripTime, sortTripPrice} from "../utils/trip.js";
 import {SortType} from "../const.js";
@@ -18,6 +19,7 @@ class Trip {
     this._tripListComponent = new TripListView();
     this._noTripComponent = new NoTripView();
 
+    this._handleTripChange = this._handleTripChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
   }
 
@@ -26,6 +28,12 @@ class Trip {
     this._sourcedEventsTrips = eventsTrips.slice();
 
     this._renderEvents();
+  }
+
+  _handleTripChange(updateTrip) {
+    this._eventsTrips = updateItem(this._eventsTrips, updateTrip);
+    this._sourcedEventsTrips = updateItem(this._sourcedEventsTrips, updateTrip);
+    this._tripPresenter[updateTrip.id].init(updateTrip);
   }
 
   _sortTrips(sortType) {
@@ -68,7 +76,7 @@ class Trip {
   }
 
   _renderTrip(element, trip) {
-    const waypointPresenter = new WaypointPresenter(element, this._eventsContainer);
+    const waypointPresenter = new WaypointPresenter(element, this._eventsContainer, this._handleTripChange);
     waypointPresenter.init(trip);
     this._tripPresenter[trip.id] = waypointPresenter;
   }

@@ -3,14 +3,16 @@ import TripEventEditView from "../view/trip-event-edit.js";
 import {render, RenderPosition, replace, remove} from "../utils/render.js";
 
 class Waypoint {
-  constructor(tripEventsListContainer, eventsContainer) {
+  constructor(tripEventsListContainer, eventsContainer, changeData) {
     this._tripEventsListContainer = tripEventsListContainer;
     this._eventsContainer = eventsContainer;
+    this._changeData = changeData;
 
     this._tripEventComponent = null;
     this._tripEventEditComponent = null;
 
     this._handleEditClick = this._handleEditClick.bind(this);
+    this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
   }
@@ -25,6 +27,7 @@ class Waypoint {
     this._tripEventEditComponent = new TripEventEditView(trip);
 
     this._tripEventComponent.editClickHandler = this._handleEditClick;
+    this._tripEventComponent.favoriteClickHandler = this._handleFavoriteClick;
     this._tripEventEditComponent.formSubmitHandler = this._handleFormSubmit;
 
     if (prevTripEventComponent === null || prevTripEventEditComponent === null) {
@@ -70,7 +73,20 @@ class Waypoint {
     this._replaceTripToForm();
   }
 
-  _handleFormSubmit() {
+  _handleFavoriteClick() {
+    this._changeData(
+        Object.assign(
+            {},
+            this._trip,
+            {
+              isFavorite: !this._trip.isFavorite
+            }
+        )
+    );
+  }
+
+  _handleFormSubmit(trip) {
+    this._changeData(trip);
     this._replaceFormToTrip();
   }
 }

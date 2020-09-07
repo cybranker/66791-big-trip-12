@@ -21,6 +21,7 @@ class TripEventEdit extends AbstractView {
     this._trip = trip;
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
   }
 
   _createEventTypeGroupsTemplate(events, eventCheck) {
@@ -156,7 +157,12 @@ class TripEventEdit extends AbstractView {
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
-    this._callback.formSubmit();
+    this._callback.formSubmit(this._trip);
+  }
+
+  _favoriteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.favoriteClick();
   }
 
   get _template() {
@@ -166,6 +172,11 @@ class TripEventEdit extends AbstractView {
   set formSubmitHandler(callback) {
     this._callback.formSubmit = callback;
     this.element.querySelector(`form`).addEventListener(`submit`, this._formSubmitHandler);
+  }
+
+  set favoriteClickHandler(callback) {
+    this._callback.favoriteClick = callback;
+    this.element.querySelector(`.event__favorite-btn`).addEventListener(`click`, this._favoriteClickHandler);
   }
 }
 
