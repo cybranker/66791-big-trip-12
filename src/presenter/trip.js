@@ -1,10 +1,9 @@
 import TripSortView from "../view/trip-sort.js";
-import TripEventEditView from "../view/trip-event-edit.js";
 import TripListView from "../view/trip-list.js";
 import TripDayView from "../view/trip-day.js";
-import TripEventView from "../view/trip-event.js";
 import NoTripView from "../view/no-trips.js";
-import {render, RenderPosition, replace, remove} from "../utils/render.js";
+import WaypointPresenter from "./waypoint.js";
+import {render, RenderPosition, remove} from "../utils/render.js";
 import {sortTripTime, sortTripPrice} from "../utils/trip.js";
 import {SortType} from "../const.js";
 
@@ -68,36 +67,8 @@ class Trip {
   }
 
   _renderTrip(element, trip) {
-    const tripEventComponent = new TripEventView(trip);
-    const tripEventEditComponent = new TripEventEditView(trip);
-
-    const replaceTripToForm = () => {
-      replace(tripEventEditComponent, tripEventComponent);
-    };
-
-    const replaceFormToTrip = () => {
-      replace(tripEventComponent, tripEventEditComponent);
-    };
-
-    const onEscKeyDown = (evt) => {
-      if (evt.key === `Escape` || evt.key === `Esc`) {
-        evt.preventDefault();
-        replaceFormToTrip();
-        document.removeEventListener(`keydown`, onEscKeyDown);
-      }
-    };
-
-    tripEventComponent.editClickHandler = () => {
-      replaceTripToForm();
-      document.addEventListener(`keydown`, onEscKeyDown);
-    };
-
-    tripEventEditComponent.formSubmitHandler = () => {
-      replaceFormToTrip();
-      document.removeEventListener(`keydown`, onEscKeyDown);
-    };
-
-    render(element, tripEventComponent, RenderPosition.BEFOREEND);
+    const waypointPresenter = new WaypointPresenter(element);
+    waypointPresenter.init(trip);
   }
 
   _renderTripList() {
