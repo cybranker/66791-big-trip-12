@@ -12,6 +12,7 @@ class Trip {
     this._eventsContainer = eventsContainer;
     this._renderedTripCount = count;
     this._currentSortType = SortType.DEFAULT;
+    this._tripPresenter = {};
 
     this._tripSortComponent = new TripSortView(this._currentSortType);
     this._tripListComponent = new TripListView();
@@ -67,8 +68,9 @@ class Trip {
   }
 
   _renderTrip(element, trip) {
-    const waypointPresenter = new WaypointPresenter(element);
+    const waypointPresenter = new WaypointPresenter(element, this._eventsContainer);
     waypointPresenter.init(trip);
+    this._tripPresenter[trip.id] = waypointPresenter;
   }
 
   _renderTripList() {
@@ -80,7 +82,10 @@ class Trip {
   }
 
   _clearTrips() {
-    this._eventsContainer.querySelector(`.trip-days`).innerHTML = ``;
+    Object
+      .values(this._tripPresenter)
+      .forEach((presenter) => presenter.destroy());
+    this._tripPresenter = {};
   }
 
   _renderTrips() {
