@@ -27,7 +27,7 @@ class Waypoint {
     this._tripEventEditComponent = new TripEventEditView(trip);
 
     this._tripEventComponent.editClickHandler = this._handleEditClick;
-    this._tripEventComponent.favoriteClickHandler = this._handleFavoriteClick;
+    this._tripEventEditComponent.favoriteClickHandler = this._handleFavoriteClick;
     this._tripEventEditComponent.formSubmitHandler = this._handleFormSubmit;
 
     if (prevTripEventComponent === null || prevTripEventEditComponent === null) {
