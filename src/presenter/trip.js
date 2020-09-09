@@ -20,6 +20,7 @@ class Trip {
     this._noTripComponent = new NoTripView();
 
     this._handleTripChange = this._handleTripChange.bind(this);
+    this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
   }
 
@@ -28,6 +29,12 @@ class Trip {
     this._sourcedEventsTrips = eventsTrips.slice();
 
     this._renderEvents();
+  }
+
+  _handleModeChange() {
+    Object
+      .values(this._tripPresenter)
+      .forEach((presenter) => presenter.resetView());
   }
 
   _handleTripChange(updateTrip) {
@@ -76,7 +83,7 @@ class Trip {
   }
 
   _renderTrip(element, trip) {
-    const waypointPresenter = new WaypointPresenter(element, this._eventsContainer, this._handleTripChange);
+    const waypointPresenter = new WaypointPresenter(element, this._eventsContainer, this._handleTripChange, this._handleModeChange);
     waypointPresenter.init(trip);
     this._tripPresenter[trip.id] = waypointPresenter;
   }
