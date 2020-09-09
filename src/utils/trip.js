@@ -4,6 +4,18 @@ const getEventWithoutActionName = (type) => {
   return eventType;
 };
 
+const getEventWithActionName = (type) => {
+  if (type === `sightseeing` || type === `restaurant`) {
+    type = `${type} in`;
+  } else if (type === `check-in`) {
+    type = `${type} `;
+  } else {
+    type = `${type} to`;
+  }
+
+  return upperFirst(type);
+};
+
 const upperFirst = (string) => {
   return string ? string.charAt(0).toUpperCase() + string.slice(1) : ``;
 };
@@ -35,6 +47,7 @@ const sortTripPrice = (tripA, tripB) => {
 
 export {
   getEventWithoutActionName,
+  getEventWithActionName,
   upperFirst,
   humanizeTaskDate,
   dateTimeFormat,

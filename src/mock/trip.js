@@ -2,6 +2,8 @@ import {generateEventType} from "./event-type.js";
 import {getRandomInteger, getArrayRandomLength} from "../utils/common.js";
 import {CITIES, SENTENCE, OFFERS_MAP} from "../const.js";
 
+const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
+
 const generateEvent = (events) => {
   const eventsKeys = Object.keys(events);
 
@@ -79,6 +81,7 @@ const generateTrip = () => {
   const timeOut = generateTime(new Date(timeIn));
 
   return {
+    id: generateId(),
     event: generateEvent(generateEventType()),
     city: generateCity(CITIES),
     offers: Object.fromEntries(generateOffers(OFFERS_MAP)),
@@ -91,4 +94,10 @@ const generateTrip = () => {
   };
 };
 
-export {generateTrip};
+export {
+  getRandomInteger,
+  generateOffers,
+  generateDescription,
+  generatePhotos,
+  generateTrip
+};
