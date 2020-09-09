@@ -1,7 +1,8 @@
-import AbstractView from "./abstract.js";
+import SmartView from "./smart.js";
 import {generateEventType} from "../mock/event-type.js";
-import {OFFERS_MAP} from "../const.js";
-import {upperFirst, getEventWithoutActionName, humanizeTaskDate} from "../utils/trip.js";
+import {SENTENCE, OFFERS_MAP} from "../const.js";
+import {getRandomInteger, generateOffers, generateDescription, generatePhotos} from "../mock/trip.js";
+import {upperFirst, getEventWithActionName, getEventWithoutActionName, humanizeTaskDate} from "../utils/trip.js";
 
 const BLANK_TRIP = {
   event: `Taxi to`,
@@ -15,13 +16,23 @@ const BLANK_TRIP = {
   isFavorite: false
 };
 
-class TripEventEdit extends AbstractView {
+class TripEventEdit extends SmartView {
   constructor(trip = BLANK_TRIP) {
     super();
-    this._trip = trip;
+    this._data = trip;
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
+    this._eventTypeChangeHandler = this._eventTypeChangeHandler.bind(this);
+    this._eventDestinationChangeHandler = this._eventDestinationChangeHandler.bind(this);
+
+    this._setInnerHandlers();
+  }
+
+  reset(trip) {
+    this.updateData(
+        trip
+    );
   }
 
   _createEventTypeGroupsTemplate(events, eventCheck) {
@@ -66,8 +77,8 @@ class TripEventEdit extends AbstractView {
     </div>`).join(``);
   }
 
-  _createTripEventEditTemplate(trip) {
-    const {event, city, offers, description, photos, timeIn, timeOut, price, isFavorite} = trip;
+  _createTripEventEditTemplate(data) {
+    const {event, city, offers, description, photos, timeIn, timeOut, price, isFavorite} = data;
 
     const eventTypeGroupsTemplate = this._createEventTypeGroupsTemplate(generateEventType(), getEventWithoutActionName(event));
     const favoriteTemplate = this._createFavoriteTemplate(isFavorite);
@@ -121,7 +132,7 @@ class TripEventEdit extends AbstractView {
             <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
           </div>
 
-          <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
+          <button class="event__save-btn  btn  btn--blue" type="submit" ${!city ? `disabled` : ``}>Save</button>
           <button class="event__reset-btn" type="reset">Delete</button>
 
           ${favoriteTemplate}
@@ -131,7 +142,7 @@ class TripEventEdit extends AbstractView {
           </button>
         </header>
 
-        <section class="event__details">
+        ${city ? `<section class="event__details">
           <section class="event__section  event__section--offers">
             <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
@@ -150,14 +161,14 @@ class TripEventEdit extends AbstractView {
               </div>
             </div>
           </section>
-        </section>
+        </section>` : ``}
       </form>
     </li>`;
   }
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
-    this._callback.formSubmit(this._trip);
+    this._callback.formSubmit(this._data);
   }
 
   _favoriteClickHandler(evt) {
@@ -166,7 +177,41 @@ class TripEventEdit extends AbstractView {
   }
 
   get _template() {
-    return this._createTripEventEditTemplate(this._trip);
+    return this._createTripEventEditTemplate(this._data);
+  }
+
+  restoreHandlers() {
+    this._setInnerHandlers();
+    this.formSubmitHandler = this._callback.formSubmit;
+  }
+
+  _setInnerHandlers() {
+    this.element
+      .querySelector(`.event__type-list`)
+      .addEventListener(`change`, this._eventTypeChangeHandler);
+    this.element
+      .querySelector(`input[name="event-destination"]`)
+      .addEventListener(`change`, this._eventDestinationChangeHandler);
+  }
+
+  _eventTypeChangeHandler(evt) {
+    evt.preventDefault();
+
+    if (evt.target && evt.target.matches(`[name="event-type"]`)) {
+      this.updateData({
+        event: getEventWithActionName(evt.target.value)
+      });
+    }
+  }
+
+  _eventDestinationChangeHandler(evt) {
+    evt.preventDefault();
+    this.updateData({
+      city: evt.target.value,
+      offers: Object.fromEntries(generateOffers(OFFERS_MAP)),
+      description: generateDescription(SENTENCE),
+      photos: generatePhotos(getRandomInteger(1, 6))
+    });
   }
 
   set formSubmitHandler(callback) {

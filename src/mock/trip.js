@@ -94,4 +94,10 @@ const generateTrip = () => {
   };
 };
 
-export {generateTrip};
+export {
+  getRandomInteger,
+  generateOffers,
+  generateDescription,
+  generatePhotos,
+  generateTrip
+};
