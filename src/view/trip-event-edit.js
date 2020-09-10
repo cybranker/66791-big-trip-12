@@ -3,6 +3,9 @@ import {generateEventType} from "../mock/event-type.js";
 import {SENTENCE, OFFERS_MAP} from "../const.js";
 import {getRandomInteger, generateOffers, generateDescription, generatePhotos} from "../mock/trip.js";
 import {upperFirst, getEventWithActionName, getEventWithoutActionName, humanizeTaskDate} from "../utils/trip.js";
+import flatpickr from "flatpickr";
+
+import "../../node_modules/flatpickr/dist/flatpickr.min.css";
 
 const BLANK_TRIP = {
   event: `Taxi to`,
@@ -20,13 +23,18 @@ class TripEventEdit extends SmartView {
   constructor(trip = BLANK_TRIP) {
     super();
     this._data = trip;
+    this._datepickerTimeIn = null;
+    this._datepickerTimeOut = null;
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._timeInChangeHandler = this._timeInChangeHandler.bind(this);
+    this._timeOutChangeHandler = this._timeOutChangeHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._eventTypeChangeHandler = this._eventTypeChangeHandler.bind(this);
     this._eventDestinationChangeHandler = this._eventDestinationChangeHandler.bind(this);
 
     this._setInnerHandlers();
+    this._setDatepicker();
   }
 
   reset(trip) {
@@ -182,7 +190,40 @@ class TripEventEdit extends SmartView {
 
   restoreHandlers() {
     this._setInnerHandlers();
+    this._setDatepicker();
     this.formSubmitHandler = this._callback.formSubmit;
+  }
+
+  _setDatepicker() {
+    if (this._datepickerTimeIn) {
+      this._datepickerTimeIn.destroy();
+      this._datepickerTimeIn = null;
+    }
+
+    if (this._datepickerTimeOut) {
+      this._datepickerTimeOut.destroy();
+      this._datepickerTimeOut = null;
+    }
+
+    this._datepickerTimeIn = flatpickr(
+        this.element.querySelector(`input[name="event-start-time"]`),
+        {
+          enableTime: true,
+          dateFormat: `d/m/y H:i`,
+          defaultDate: this._data.timeIn,
+          onChange: this._timeInChangeHandler
+        }
+    );
+
+    this._datepickerTimeIn = flatpickr(
+        this.element.querySelector(`input[name="event-end-time"]`),
+        {
+          enableTime: true,
+          dateFormat: `d/m/y H:i`,
+          defaultDate: this._data.timeOut,
+          onChange: this._timeOutChangeHandler
+        }
+    );
   }
 
   _setInnerHandlers() {
@@ -192,6 +233,18 @@ class TripEventEdit extends SmartView {
     this.element
       .querySelector(`input[name="event-destination"]`)
       .addEventListener(`change`, this._eventDestinationChangeHandler);
+  }
+
+  _timeInChangeHandler([userData]) {
+    this.updateData({
+      timeIn: userData
+    });
+  }
+
+  _timeOutChangeHandler([userData]) {
+    this.updateData({
+      timeOut: userData
+    });
   }
 
   _eventTypeChangeHandler(evt) {
