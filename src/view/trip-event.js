@@ -1,6 +1,7 @@
 import AbstractView from "./abstract.js";
 import {getEventWithoutActionName, humanizeTaskDate} from "../utils/trip.js";
 import {addZerosNumber} from "../utils/common.js";
+import moment from "moment";
 
 const MAX_RENDER_OFFERS_TRIP = 3;
 
@@ -29,16 +30,16 @@ class TripEvent extends AbstractView {
   }
 
   _renderDurationStay(timeIn, timeOut) {
-    let diffInMilliSeconds = Math.abs(timeOut - timeIn) / 1000;
+    if (!(timeIn instanceof Date) || !(timeOut instanceof Date)) {
+      return ``;
+    }
 
-    const days = Math.floor(diffInMilliSeconds / 86400);
-    diffInMilliSeconds -= days * 86400;
-
-    const hours = Math.floor(diffInMilliSeconds / 3600) % 24;
-    diffInMilliSeconds -= hours * 3600;
-
-    const minutes = Math.floor(diffInMilliSeconds / 60) % 60;
-    diffInMilliSeconds -= minutes * 60;
+    timeIn = moment(timeIn);
+    timeOut = moment(timeOut);
+    const duration = moment.duration(timeOut.diff(timeIn));
+    const days = duration.days();
+    const hours = duration.hours();
+    const minutes = duration.minutes();
 
     let durationStay = ``;
 
