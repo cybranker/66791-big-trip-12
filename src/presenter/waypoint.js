@@ -1,6 +1,7 @@
 import TripEventView from "../view/trip-event.js";
 import TripEventEditView from "../view/trip-event-edit.js";
 import {render, RenderPosition, replace, remove} from "../utils/render.js";
+import {UserAction, UpdateType} from "../const.js";
 
 const Mode = {
   DEFAULT: `DEFAULT`,
@@ -92,6 +93,8 @@ class Waypoint {
 
   _handleFavoriteClick() {
     this._changeData(
+        UserAction.UPDATE_TRIP,
+        UpdateType.MINOR,
         Object.assign(
             {},
             this._trip,
@@ -103,7 +106,11 @@ class Waypoint {
   }
 
   _handleFormSubmit(trip) {
-    this._changeData(trip);
+    this._changeData(
+        UserAction.UPDATE_TRIP,
+        UpdateType.MINOR,
+        trip
+    );
     this._replaceFormToTrip();
   }
 }
