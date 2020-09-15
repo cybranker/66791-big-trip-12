@@ -74,7 +74,7 @@ class Trip {
         this._renderEvents();
         break;
       case UpdateType.MAJOR:
-        this._clearEvents({resetRenderedTripDay: true, resetSortType: true});
+        this._clearEvents({resetSortType: true});
         this._renderEvents();
         break;
     }
@@ -88,7 +88,6 @@ class Trip {
     this._currentSortType = sortType;
     this._clearEvents();
     this._renderEvents();
-    this._renderSort({resetSortType: true});
   }
 
   _renderSort() {
@@ -157,7 +156,7 @@ class Trip {
     }
   }
 
-  _clearEvents({resetRenderedTripDay = false, resetSortType = false} = {}) {
+  _clearEvents({resetSortType = false} = {}) {
     Object
       .values(this._tripPresenter)
       .forEach((presenter) => presenter.destroy());
@@ -165,6 +164,7 @@ class Trip {
 
     remove(this._tripSortComponent);
     remove(this._noTripComponent);
+    remove(this._tripListComponent);
     remove(this._tripDayComponent);
 
     if (resetSortType) {

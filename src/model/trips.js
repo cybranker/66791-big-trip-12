@@ -51,7 +51,7 @@ class Trips extends Observer {
       ...this._trips.slice(index + 1)
     ];
 
-    this._notify(updateType)
+    this._notify(updateType);
   }
 }
 
