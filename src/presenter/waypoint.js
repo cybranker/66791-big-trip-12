@@ -22,6 +22,7 @@ class Waypoint {
     this._handleEditClick = this._handleEditClick.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
+    this._handleDeleteClick = this._handleDeleteClick.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
   }
 
@@ -37,6 +38,7 @@ class Waypoint {
     this._tripEventComponent.editClickHandler = this._handleEditClick;
     this._tripEventEditComponent.favoriteClickHandler = this._handleFavoriteClick;
     this._tripEventEditComponent.formSubmitHandler = this._handleFormSubmit;
+    this._tripEventEditComponent.deleteClickHandler = this._handleDeleteClick;
 
     if (prevTripEventComponent === null || prevTripEventEditComponent === null) {
       render(this._tripEventsListContainer, this._tripEventComponent, RenderPosition.BEFOREEND);
@@ -105,13 +107,21 @@ class Waypoint {
     );
   }
 
-  _handleFormSubmit(trip) {
+  _handleFormSubmit(update) {
     this._changeData(
         UserAction.UPDATE_TRIP,
         UpdateType.MINOR,
-        trip
+        update
     );
     this._replaceFormToTrip();
+  }
+
+  _handleDeleteClick(trip) {
+    this._changeData(
+        UserAction.DELETE_TRIP,
+        UpdateType.MINOR,
+        trip
+    );
   }
 }
 

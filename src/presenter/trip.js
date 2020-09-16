@@ -124,13 +124,6 @@ class Trip {
     render(this._eventsContainer, this._noTripComponent, RenderPosition.BEFOREEND);
   }
 
-  _clearTrips() {
-    Object
-      .values(this._tripPresenter)
-      .forEach((presenter) => presenter.destroy());
-    this._tripPresenter = {};
-  }
-
   _renderTrips() {
     const tripListElement = this._eventsContainer.querySelector(`.trip-days`);
 
@@ -142,7 +135,7 @@ class Trip {
     let tripEventsListElement = tripListElement.querySelectorAll(`.trip-events__list`)[tripDayCount];
     this._renderTrip(tripEventsListElement, this._trips[0]);
 
-    for (let i = 1; i < this._renderedTripCount; i++) {
+    for (let i = 1; i < this._trips.length; i++) {
       if (tripDay !== this._trips[i].timeIn.toDateString()
           && this._currentSortType === SortType.DEFAULT) {
         tripDay = this._trips[i].timeIn.toDateString();
