@@ -33,7 +33,7 @@ class Waypoint {
     const prevTripEventEditComponent = this._tripEventEditComponent;
 
     this._tripEventComponent = new TripEventView(trip);
-    this._tripEventEditComponent = new TripEventEditView(trip);
+    this._tripEventEditComponent = new TripEventEditView(UserAction.UPDATE_TRIP, trip);
 
     this._tripEventComponent.editClickHandler = this._handleEditClick;
     this._tripEventEditComponent.favoriteClickHandler = this._handleFavoriteClick;

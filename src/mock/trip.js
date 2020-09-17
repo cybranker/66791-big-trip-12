@@ -95,6 +95,7 @@ const generateTrip = () => {
 };
 
 export {
+  generateId,
   getRandomInteger,
   generateOffers,
   generateDescription,

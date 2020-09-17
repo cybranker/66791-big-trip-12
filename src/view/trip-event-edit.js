@@ -1,6 +1,6 @@
 import SmartView from "./smart.js";
 import {generateEventType} from "../mock/event-type.js";
-import {SENTENCE, OFFERS_MAP} from "../const.js";
+import {SENTENCE, OFFERS_MAP, UserAction} from "../const.js";
 import {getRandomInteger, generateOffers, generateDescription, generatePhotos} from "../mock/trip.js";
 import {upperFirst, getEventWithActionName, getEventWithoutActionName, humanizeTaskDate} from "../utils/trip.js";
 import flatpickr from "flatpickr";
@@ -15,14 +15,15 @@ const BLANK_TRIP = {
   photos: [],
   timeIn: new Date().setHours(0, 0),
   timeOut: new Date().setHours(0, 0),
-  price: ``,
+  price: `0`,
   isFavorite: false
 };
 
 class TripEventEdit extends SmartView {
-  constructor(trip = BLANK_TRIP) {
+  constructor(userAction, trip = BLANK_TRIP) {
     super();
     this._data = trip;
+    this._userAction = userAction;
     this._datepickerTimeIn = null;
     this._datepickerTimeOut = null;
 
@@ -102,14 +103,14 @@ class TripEventEdit extends SmartView {
 
   _createTripEventEditTemplate(data) {
     const {event, city, offers, description, photos, timeIn, timeOut, price, isFavorite} = data;
+    const isActionAddTrip = this._userAction === UserAction.ADD_TRIP;
 
     const eventTypeGroupsTemplate = this._createEventTypeGroupsTemplate(generateEventType(), getEventWithoutActionName(event));
-    const favoriteTemplate = this._createFavoriteTemplate(isFavorite);
+    const favoriteTemplate = isActionAddTrip ? `` : this._createFavoriteTemplate(isFavorite);
     const offersTemplate = this._createEventOffersTemplate(OFFERS_MAP, offers);
     const photosTemplate = this._createEventPhotosTemplate(photos);
 
-    return `<li class="trip-events__item">
-      <form class="event  event--edit" action="#" method="post">
+    const template = `<form class="${isActionAddTrip ? `trip-events__item` : ``} event  event--edit" action="#" method="post">
         <header class="event__header">
           <div class="event__type-wrapper">
             <label class="event__type  event__type-btn" for="event-type-toggle-1">
@@ -156,13 +157,13 @@ class TripEventEdit extends SmartView {
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit" ${!city ? `disabled` : ``}>Save</button>
-          <button class="event__reset-btn" type="reset">Delete</button>
+          <button class="event__reset-btn" type="reset">${isActionAddTrip ? `Cancel` : `Delete`}</button>
 
           ${favoriteTemplate}
 
-          <button class="event__rollup-btn" type="button">
+          ${isActionAddTrip ? `` : `<button class="event__rollup-btn" type="button">
             <span class="visually-hidden">Open event</span>
-          </button>
+          </button>`}
         </header>
 
         ${city ? `<section class="event__details">
@@ -185,8 +186,9 @@ class TripEventEdit extends SmartView {
             </div>
           </section>
         </section>` : ``}
-      </form>
-    </li>`;
+      </form>`;
+
+    return isActionAddTrip ? template : `<li class="trip-events__item">${template}</li>`;
   }
 
   _formSubmitHandler(evt) {
@@ -285,7 +287,8 @@ class TripEventEdit extends SmartView {
 
   set formSubmitHandler(callback) {
     this._callback.formSubmit = callback;
-    this.element.querySelector(`form`).addEventListener(`submit`, this._formSubmitHandler);
+    const element = (this._userAction === UserAction.ADD_TRIP) ? this.element : this.element.querySelector(`form`);
+    element.addEventListener(`submit`, this._formSubmitHandler);
   }
 
   set favoriteClickHandler(callback) {
