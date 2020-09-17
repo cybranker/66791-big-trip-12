@@ -1,6 +1,5 @@
 import FilterView from "../view/trip-filters.js";
 import {render, RenderPosition, replace, remove} from "../utils/render.js";
-import {filter} from "../utils/filter.js";
 import {FilterType, UpdateType} from "../const.js";
 
 class Filter {
@@ -12,7 +11,7 @@ class Filter {
 
     this._filterComponent = null;
 
-    this._handleModelEvent =this._handleModelEvent.bind(this);
+    this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleFilterTypeChange = this._handleFilterTypeChange.bind(this);
 
     this._tripsModel.addObserver(this._handleModelEvent);
@@ -50,8 +49,6 @@ class Filter {
   }
 
   _getFilters() {
-    const trips = this._tripsModel.trips;
-
     return [
       {
         type: FilterType.EVERYTHING,

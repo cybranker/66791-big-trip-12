@@ -31,7 +31,7 @@ const siteMainElement = document.querySelector(`.trip-events`);
 render(siteHeaderElement, new TripInfoView(), RenderPosition.AFTERBEGIN);
 render(tripControlsElement.children[0], new TripMenuView(), RenderPosition.AFTEREND);
 
-const tripPresenter = new TripPresenter(siteMainElement, TRIP_COUNT, tripsModel, filterModel);
+const tripPresenter = new TripPresenter(siteMainElement, tripsModel, filterModel);
 const filterPresenter = new FilterPresenter(tripControlsElement, filterModel, tripsModel);
 
 filterPresenter.init();

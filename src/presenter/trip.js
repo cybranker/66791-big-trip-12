@@ -9,11 +9,10 @@ import {filter} from "../utils/filter.js";
 import {SortType, UpdateType, UserAction} from "../const.js";
 
 class Trip {
-  constructor(eventsContainer, count, tripsModel, filterModel) {
+  constructor(eventsContainer, tripsModel, filterModel) {
     this._tripsModel = tripsModel;
     this._filterModel = filterModel;
     this._eventsContainer = eventsContainer;
-    this._renderedTripCount = count;
     this._currentSortType = SortType.DEFAULT;
     this._tripPresenter = {};
 
@@ -43,9 +42,9 @@ class Trip {
 
     switch (this._currentSortType) {
       case SortType.TIME:
-        return filtredTrips.sort(sortTripTime);
+        return filtredTrips.slice().sort(sortTripTime);
       case SortType.PRICE:
-        return filtredTrips.sort(sortTripPrice);
+        return filtredTrips.slice().sort(sortTripPrice);
     }
 
     return filtredTrips;
