@@ -5,11 +5,13 @@ import NoTripView from "../view/no-trips.js";
 import WaypointPresenter from "./waypoint.js";
 import {render, RenderPosition, remove} from "../utils/render.js";
 import {sortTripTime, sortTripPrice} from "../utils/trip.js";
+import {filter} from "../utils/filter.js";
 import {SortType, UpdateType, UserAction} from "../const.js";
 
 class Trip {
-  constructor(eventsContainer, count, tripsModel) {
+  constructor(eventsContainer, count, tripsModel, filterModel) {
     this._tripsModel = tripsModel;
+    this._filterModel = filterModel;
     this._eventsContainer = eventsContainer;
     this._renderedTripCount = count;
     this._currentSortType = SortType.DEFAULT;
@@ -27,6 +29,7 @@ class Trip {
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
 
     this._tripsModel.addObserver(this._handleModelEvent);
+    this._filterModel.addObserver(this._handleModelEvent);
   }
 
   init() {
@@ -34,14 +37,18 @@ class Trip {
   }
 
   get _trips() {
+    const filterType = this._filterModel.getFilter();
+    const trips = this._tripsModel.trips;
+    const filtredTrips = filter[filterType](trips);
+
     switch (this._currentSortType) {
       case SortType.TIME:
-        return this._tripsModel.trips.slice().sort(sortTripTime);
+        return filtredTrips.sort(sortTripTime);
       case SortType.PRICE:
-        return this._tripsModel.trips.slice().sort(sortTripPrice);
+        return filtredTrips.sort(sortTripPrice);
     }
 
-    return this._tripsModel.trips;
+    return filtredTrips;
   }
 
   _handleModeChange() {
