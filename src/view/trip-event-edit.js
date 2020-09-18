@@ -13,8 +13,8 @@ const BLANK_TRIP = {
   offers: {},
   description: ``,
   photos: [],
-  timeIn: new Date().setHours(0, 0),
-  timeOut: new Date().setHours(0, 0),
+  timeIn: new Date(new Date().setHours(0, 0)),
+  timeOut: new Date(new Date().setHours(0, 0)),
   price: `0`,
   isFavorite: false
 };
