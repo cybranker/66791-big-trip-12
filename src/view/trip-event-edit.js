@@ -4,6 +4,7 @@ import {SENTENCE, OFFERS_MAP, UserAction} from "../const.js";
 import {getRandomInteger, generateOffers, generateDescription, generatePhotos} from "../mock/trip.js";
 import {upperFirst, getEventWithActionName, getEventWithoutActionName, humanizeTaskDate} from "../utils/trip.js";
 import flatpickr from "flatpickr";
+import he from "he";
 
 import "../../node_modules/flatpickr/dist/flatpickr.min.css";
 
@@ -128,7 +129,7 @@ class TripEventEdit extends SmartView {
             <label class="event__label  event__type-output" for="event-destination-1">
               ${event}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city}" list="destination-list-1">
+            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(city)}" list="destination-list-1">
             <datalist id="destination-list-1">
               <option value="Amsterdam"></option>
               <option value="Geneva"></option>
@@ -153,7 +154,7 @@ class TripEventEdit extends SmartView {
               <span class="visually-hidden">Price</span>
               &euro;
             </label>
-            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
+            <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${price}">
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit" ${!city ? `disabled` : ``}>Save</button>
