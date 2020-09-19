@@ -1,9 +1,10 @@
 import TripInfoView from "./view/trip-info.js";
 import TripMenuView from "./view/trip-menu.js";
-import TripFilterView from "./view/trip-filters.js";
 import {generateTrip} from "./mock/trip.js";
-import {generateFilter} from "./mock/filter.js";
 import TripPresenter from "./presenter/trip.js";
+import FilterPresenter from "./presenter/filter.js";
+import TripsModel from "./model/trips.js";
+import FilterModel from "./model/filter.js";
 import {render, RenderPosition} from "./utils/render.js";
 
 const TRIP_COUNT = 20;
@@ -17,16 +18,26 @@ const trips = new Array(TRIP_COUNT)
 
     return a - b;
   });
-const filters = generateFilter();
+
+const tripsModel = new TripsModel();
+tripsModel.trips = trips;
+
+const filterModel = new FilterModel();
 
 const siteHeaderElement = document.querySelector(`.trip-main`);
 const tripControlsElement = siteHeaderElement.querySelector(`.trip-controls`);
 const siteMainElement = document.querySelector(`.trip-events`);
 
-const tripPresenter = new TripPresenter(siteMainElement, TRIP_COUNT);
-
 render(siteHeaderElement, new TripInfoView(), RenderPosition.AFTERBEGIN);
 render(tripControlsElement.children[0], new TripMenuView(), RenderPosition.AFTEREND);
-render(tripControlsElement, new TripFilterView(filters), RenderPosition.BEFOREEND);
 
-tripPresenter.init(trips);
+const tripPresenter = new TripPresenter(siteMainElement, tripsModel, filterModel);
+const filterPresenter = new FilterPresenter(tripControlsElement, filterModel, tripsModel);
+
+filterPresenter.init();
+tripPresenter.init();
+
+document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, (evt) => {
+  evt.preventDefault();
+  tripPresenter.createTrip();
+});

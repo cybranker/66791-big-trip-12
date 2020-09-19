@@ -2,6 +2,7 @@ import AbstractView from "./abstract.js";
 import {getEventWithoutActionName, humanizeTaskDate} from "../utils/trip.js";
 import {addZerosNumber} from "../utils/common.js";
 import moment from "moment";
+import he from "he";
 
 const MAX_RENDER_OFFERS_TRIP = 3;
 
@@ -65,7 +66,7 @@ class TripEvent extends AbstractView {
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${getEventWithoutActionName(event)}.png" alt="Event type icon">
         </div>
-        <h3 class="event__title">${event} ${city}</h3>
+        <h3 class="event__title">${event} ${he.encode(city)}</h3>
 
         <div class="event__schedule">
           <p class="event__time">

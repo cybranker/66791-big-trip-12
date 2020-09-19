@@ -50,9 +50,30 @@ const SortType = {
   PRICE: `sort-price`
 };
 
+const UserAction = {
+  UPDATE_TRIP: `UPDATE_TRIP`,
+  ADD_TRIP: `ADD_TRIP`,
+  DELETE_TRIP: `DELETE_TRIP`
+};
+
+const UpdateType = {
+  PATCH: `PATCH`,
+  MINOR: `MINOR`,
+  MAJOR: `MAJOR`
+};
+
+const FilterType = {
+  EVERYTHING: `everything`,
+  FUTURE: `future`,
+  PAST: `past`
+};
+
 export {
   CITIES,
   SENTENCE,
   OFFERS_MAP,
-  SortType
+  SortType,
+  UserAction,
+  UpdateType,
+  FilterType
 };

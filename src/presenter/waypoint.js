@@ -1,6 +1,7 @@
 import TripEventView from "../view/trip-event.js";
 import TripEventEditView from "../view/trip-event-edit.js";
 import {render, RenderPosition, replace, remove} from "../utils/render.js";
+import {UserAction, UpdateType} from "../const.js";
 
 const Mode = {
   DEFAULT: `DEFAULT`,
@@ -21,6 +22,7 @@ class Waypoint {
     this._handleEditClick = this._handleEditClick.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
+    this._handleDeleteClick = this._handleDeleteClick.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
   }
 
@@ -31,11 +33,12 @@ class Waypoint {
     const prevTripEventEditComponent = this._tripEventEditComponent;
 
     this._tripEventComponent = new TripEventView(trip);
-    this._tripEventEditComponent = new TripEventEditView(trip);
+    this._tripEventEditComponent = new TripEventEditView(UserAction.UPDATE_TRIP, trip);
 
     this._tripEventComponent.editClickHandler = this._handleEditClick;
     this._tripEventEditComponent.favoriteClickHandler = this._handleFavoriteClick;
     this._tripEventEditComponent.formSubmitHandler = this._handleFormSubmit;
+    this._tripEventEditComponent.deleteClickHandler = this._handleDeleteClick;
 
     if (prevTripEventComponent === null || prevTripEventEditComponent === null) {
       render(this._tripEventsListContainer, this._tripEventComponent, RenderPosition.BEFOREEND);
@@ -92,6 +95,8 @@ class Waypoint {
 
   _handleFavoriteClick() {
     this._changeData(
+        UserAction.UPDATE_TRIP,
+        UpdateType.MINOR,
         Object.assign(
             {},
             this._trip,
@@ -102,9 +107,21 @@ class Waypoint {
     );
   }
 
-  _handleFormSubmit(trip) {
-    this._changeData(trip);
+  _handleFormSubmit(update) {
+    this._changeData(
+        UserAction.UPDATE_TRIP,
+        UpdateType.MINOR,
+        update
+    );
     this._replaceFormToTrip();
+  }
+
+  _handleDeleteClick(trip) {
+    this._changeData(
+        UserAction.DELETE_TRIP,
+        UpdateType.MINOR,
+        trip
+    );
   }
 }
 
