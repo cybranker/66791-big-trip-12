@@ -11,13 +11,7 @@ const TRIP_COUNT = 20;
 
 const trips = new Array(TRIP_COUNT)
   .fill()
-  .map(generateTrip)
-  .sort((a, b) => {
-    a = new Date(a.timeIn);
-    b = new Date(b.timeIn);
-
-    return a - b;
-  });
+  .map(generateTrip);
 
 const tripsModel = new TripsModel();
 tripsModel.trips = trips;
