@@ -68,6 +68,11 @@ const FilterType = {
   PAST: `past`
 };
 
+const MenuItem = {
+  TABLE: `TABLE`,
+  STATS: `STATS`
+};
+
 export {
   CITIES,
   SENTENCE,
@@ -75,5 +80,6 @@ export {
   SortType,
   UserAction,
   UpdateType,
-  FilterType
+  FilterType,
+  MenuItem
 };
