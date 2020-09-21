@@ -6,7 +6,7 @@ import FilterPresenter from "./presenter/filter.js";
 import TripsModel from "./model/trips.js";
 import FilterModel from "./model/filter.js";
 import {render, RenderPosition} from "./utils/render.js";
-import {MenuItem} from "./const.js";
+import {MenuItem, UpdateType, FilterType} from "./const.js";
 
 const TRIP_COUNT = 20;
 
@@ -30,13 +30,26 @@ render(tripControlsElement.children[0], tripMenuComponent, RenderPosition.AFTERE
 const tripPresenter = new TripPresenter(siteMainElement, tripsModel, filterModel);
 const filterPresenter = new FilterPresenter(tripControlsElement, filterModel, tripsModel);
 
+const handleTripNewFormClose = () => {
+  tripMenuComponent.menuItem = MenuItem.TABLE;
+};
+
 const handleSiteMenuClick = (menuItem) => {
   switch (menuItem) {
+    case MenuItem.ADD_NEW_EVENT:
+      tripMenuComponent.menuItem = MenuItem.TABLE;
+      tripPresenter.destroy();
+      filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+      tripPresenter.init();
+      tripPresenter.createTrip(handleTripNewFormClose);
+      break;
     case MenuItem.TABLE:
       tripMenuComponent.menuItem = MenuItem.TABLE;
+      tripPresenter.init();
       break;
     case MenuItem.STATS:
       tripMenuComponent.menuItem = MenuItem.STATS;
+      tripPresenter.destroy();
       break;
   }
 };
@@ -48,5 +61,6 @@ tripPresenter.init();
 
 document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, (evt) => {
   evt.preventDefault();
-  tripPresenter.createTrip();
+  handleSiteMenuClick(evt.target.dataset.value);
+  // tripPresenter.createTrip();
 });
