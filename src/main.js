@@ -1,5 +1,6 @@
 import TripInfoView from "./view/trip-info.js";
 import TripMenuView from "./view/trip-menu.js";
+import StatisticsView from "./view/statistics.js";
 import {generateTrip} from "./mock/trip.js";
 import TripPresenter from "./presenter/trip.js";
 import FilterPresenter from "./presenter/filter.js";
@@ -49,6 +50,7 @@ const handleSiteMenuClick = (menuItem) => {
       break;
     case MenuItem.STATS:
       tripMenuComponent.menuItem = MenuItem.STATS;
+      siteMainElement.classList.add(`trip-events--hidden`);
       tripPresenter.destroy();
       break;
   }
@@ -57,10 +59,12 @@ const handleSiteMenuClick = (menuItem) => {
 tripMenuComponent.menuClickHandler = handleSiteMenuClick;
 
 filterPresenter.init();
-tripPresenter.init();
+// tripPresenter.init();
+siteMainElement.classList.add(`trip-events--hidden`);
+
+render(siteMainElement, new StatisticsView(tripsModel.trips), RenderPosition.AFTEREND);
 
 document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, (evt) => {
   evt.preventDefault();
   handleSiteMenuClick(evt.target.dataset.value);
-  // tripPresenter.createTrip();
 });
