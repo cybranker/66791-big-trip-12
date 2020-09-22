@@ -6,7 +6,7 @@ import TripPresenter from "./presenter/trip.js";
 import FilterPresenter from "./presenter/filter.js";
 import TripsModel from "./model/trips.js";
 import FilterModel from "./model/filter.js";
-import {render, RenderPosition} from "./utils/render.js";
+import {render, RenderPosition, remove} from "./utils/render.js";
 import {MenuItem, UpdateType, FilterType} from "./const.js";
 
 const TRIP_COUNT = 20;
@@ -35,10 +35,14 @@ const handleTripNewFormClose = () => {
   tripMenuComponent.menuItem = MenuItem.TABLE;
 };
 
+let statisticsComponent = null;
+
 const handleSiteMenuClick = (menuItem) => {
   switch (menuItem) {
     case MenuItem.ADD_NEW_EVENT:
+      remove(statisticsComponent);
       tripMenuComponent.menuItem = MenuItem.TABLE;
+      siteMainElement.classList.remove(`trip-events--hidden`);
       tripPresenter.destroy();
       filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
       tripPresenter.init();
@@ -46,12 +50,16 @@ const handleSiteMenuClick = (menuItem) => {
       break;
     case MenuItem.TABLE:
       tripMenuComponent.menuItem = MenuItem.TABLE;
+      siteMainElement.classList.remove(`trip-events--hidden`);
+      remove(statisticsComponent);
       tripPresenter.init();
       break;
     case MenuItem.STATS:
       tripMenuComponent.menuItem = MenuItem.STATS;
       siteMainElement.classList.add(`trip-events--hidden`);
       tripPresenter.destroy();
+      statisticsComponent = new StatisticsView(tripsModel.trips);
+      render(siteMainElement, statisticsComponent, RenderPosition.AFTEREND);
       break;
   }
 };
@@ -59,10 +67,7 @@ const handleSiteMenuClick = (menuItem) => {
 tripMenuComponent.menuClickHandler = handleSiteMenuClick;
 
 filterPresenter.init();
-// tripPresenter.init();
-siteMainElement.classList.add(`trip-events--hidden`);
-
-render(siteMainElement, new StatisticsView(tripsModel.trips), RenderPosition.AFTEREND);
+tripPresenter.init();
 
 document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, (evt) => {
   evt.preventDefault();
