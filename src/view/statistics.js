@@ -1,7 +1,7 @@
 import Chart from "chart.js";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import SmartView from "./smart.js";
-import {TripLabel, getMoneyStat, getTransportStat,getTimeStat} from "../utils/statistics.js";
+import {TripLabel, getMoneyStat, getTransportStat, getTimeStat} from "../utils/statistics.js";
 
 const BAR_HEIGHT = 55;
 
