@@ -40,7 +40,7 @@ class Statistics extends SmartView {
   }
 
   _renderChart(data, ctx, title, label) {
-    ctx.height = BAR_HEIGHT * data.size;
+    ctx.height = BAR_HEIGHT * Object.keys(data).length;
 
     return new Chart(ctx, {
       plugins: [ChartDataLabels],
