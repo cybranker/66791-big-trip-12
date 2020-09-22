@@ -1,4 +1,4 @@
-import {generateEventType} from "../mock/event-type.js";
+import moment from "moment";
 import {getEventWithoutActionName} from "./trip.js";
 
 const TripLabel = {
@@ -33,7 +33,37 @@ const getMoneyStat = (trips) => {
   return sortResult(moneyStats);
 };
 
+const getTransportStat = (trips) => {
+  const transportStat = {};
+
+  trips.forEach((it) => {
+    if (transportStat[getEventWithoutActionName(it.event)]) {
+      transportStat[getEventWithoutActionName(it.event)] += 1;
+    } else {
+      transportStat[getEventWithoutActionName(it.event)] = 1;
+    }
+  });
+
+  return sortResult(transportStat);
+};
+
+const getTimeStat = (trips) => {
+  const timeStat = {};
+
+  trips.forEach((it) => {
+    if (timeStat[getEventWithoutActionName(it.event)]) {
+      timeStat[getEventWithoutActionName(it.event)] += moment.duration(moment(it.timeOut).diff(moment(it.timeIn))).hours();
+    } else {
+      timeStat[getEventWithoutActionName(it.event)] = moment.duration(moment(it.timeOut).diff(moment(it.timeIn))).hours();
+    }
+  });
+
+  return sortResult(timeStat);
+};
+
 export {
   TripLabel,
-  getMoneyStat
+  getMoneyStat,
+  getTransportStat,
+  getTimeStat
 };

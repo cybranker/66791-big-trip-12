@@ -1,7 +1,7 @@
 import Chart from "chart.js";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import SmartView from "./smart.js";
-import {TripLabel, getMoneyStat} from "../utils/statistics.js";
+import {TripLabel, getMoneyStat, getTransportStat,getTimeStat} from "../utils/statistics.js";
 
 const BAR_HEIGHT = 55;
 
@@ -137,8 +137,8 @@ class Statistics extends SmartView {
     const timeSpendCtx = this.element.querySelector(`.statistics__chart--time`);
 
     this._moneyChart = this._renderChart(getMoneyStat(this._trips), moneyCtx, `MONEY`, `€`);
-    /*this._transportChart = this._renderChart(transportStat, transportCtx, `TRANSPORT`, `x`);
-    this._timeSpendChart = this._renderChart(timeStat, timeSpendCtx, `TIME SPENT`, `H`);*/
+    this._transportChart = this._renderChart(getTransportStat(this._trips), transportCtx, `TRANSPORT`, `x`);
+    this._timeSpendChart = this._renderChart(getTimeStat(this._trips), timeSpendCtx, `TIME SPENT`, `H`);
   }
 }
 
