@@ -68,6 +68,12 @@ const FilterType = {
   PAST: `past`
 };
 
+const MenuItem = {
+  ADD_NEW_EVENT: `ADD_NEW_EVENT`,
+  TABLE: `TABLE`,
+  STATS: `STATS`
+};
+
 export {
   CITIES,
   SENTENCE,
@@ -75,5 +81,6 @@ export {
   SortType,
   UserAction,
   UpdateType,
-  FilterType
+  FilterType,
+  MenuItem
 };

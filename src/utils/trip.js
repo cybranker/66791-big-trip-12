@@ -45,6 +45,13 @@ const sortTripPrice = (tripA, tripB) => {
   return tripBPrice - tripAPrice;
 };
 
+const sortByTimeIn = (trips) => trips.sort((a, b) => {
+  a = new Date(a.timeIn);
+  b = new Date(b.timeIn);
+
+  return a - b;
+});
+
 export {
   getEventWithoutActionName,
   getEventWithActionName,
@@ -52,5 +59,6 @@ export {
   humanizeTaskDate,
   dateTimeFormat,
   sortTripTime,
-  sortTripPrice
+  sortTripPrice,
+  sortByTimeIn
 };

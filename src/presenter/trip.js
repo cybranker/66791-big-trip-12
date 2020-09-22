@@ -5,9 +5,9 @@ import NoTripView from "../view/no-trips.js";
 import WaypointPresenter from "./waypoint.js";
 import TripNewPresenter from "./trip-new.js";
 import {render, RenderPosition, remove} from "../utils/render.js";
-import {sortTripTime, sortTripPrice} from "../utils/trip.js";
+import {sortTripTime, sortTripPrice, sortByTimeIn} from "../utils/trip.js";
 import {filter} from "../utils/filter.js";
-import {SortType, UpdateType, UserAction, FilterType} from "../const.js";
+import {SortType, UpdateType, UserAction} from "../const.js";
 
 class Trip {
   constructor(eventsContainer, tripsModel, filterModel) {
@@ -28,20 +28,25 @@ class Trip {
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
 
-    this._tripsModel.addObserver(this._handleModelEvent);
-    this._filterModel.addObserver(this._handleModelEvent);
-
     this._tripNewPresenter = new TripNewPresenter(this._eventsContainer, this._handleViewAction);
   }
 
   init() {
+    this._tripsModel.addObserver(this._handleModelEvent);
+    this._filterModel.addObserver(this._handleModelEvent);
+
     this._renderEvents();
   }
 
-  createTrip() {
-    this._currentSortType = SortType.DEFAULT;
-    this._filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-    this._tripNewPresenter.init();
+  destroy() {
+    this._clearEvents({resetSortType: true});
+
+    this._tripsModel.removeObserver(this._handleModelEvent);
+    this._filterModel.removeObserver(this._handleModelEvent);
+  }
+
+  createTrip(callback) {
+    this._tripNewPresenter.init(callback);
   }
 
   get _trips() {
@@ -143,7 +148,7 @@ class Trip {
   _renderTrips() {
     const tripListElement = this._eventsContainer.querySelector(`.trip-days`);
 
-    let tripDay = this._trips[0].timeIn.toDateString();
+    let tripDay = sortByTimeIn(this._trips)[0].timeIn.toDateString();
     let tripDayCount = 0;
 
     this._renderTripDay(tripListElement, tripDayCount, this._trips[0].timeIn, this._currentSortType);
