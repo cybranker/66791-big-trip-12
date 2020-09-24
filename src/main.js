@@ -8,12 +8,18 @@ import TripsModel from "./model/trips.js";
 import FilterModel from "./model/filter.js";
 import {render, RenderPosition, remove} from "./utils/render.js";
 import {MenuItem, UpdateType, FilterType} from "./const.js";
+import Api from "./api.js";
 
 const TRIP_COUNT = 20;
+const AUTHORIZATION = `Basic czrhuL0FziblwKuSC`;
+const END_POINT = `https://12.ecmascript.pages.academy/big-trip`;
 
-const trips = new Array(TRIP_COUNT)
-  .fill()
-  .map(generateTrip);
+const trips = new Array(TRIP_COUNT).fill().map(generateTrip);
+const api = new Api(END_POINT, AUTHORIZATION);
+
+api.trips.then((points) => {
+  console.log(points);
+});
 
 const tripsModel = new TripsModel();
 tripsModel.trips = trips;
