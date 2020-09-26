@@ -21,9 +21,10 @@ const BLANK_TRIP = {
 };
 
 class TripEventEdit extends SmartView {
-  constructor(userAction, trip = BLANK_TRIP) {
+  constructor(userAction, offers, trip = BLANK_TRIP) {
     super();
     this._data = trip;
+    this._allOffers = offers;
     this._userAction = userAction;
     this._datepickerTimeIn = null;
     this._datepickerTimeOut = null;
@@ -91,24 +92,47 @@ class TripEventEdit extends SmartView {
     return photos.map((photo) => `<img class="event__photo" src="${photo}" alt="Event photo">`).join(``);
   }
 
-  _createEventOffersTemplate(offers, offersChecked) {
-    return Object.entries(offers).map(([name, offer]) => `<div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${name}-1" type="checkbox" name="event-offer-${name}" ${name in offersChecked ? `checked` : ``}>
-      <label class="event__offer-label" for="event-offer-${name}-1">
-        <span class="event__offer-title">${offer.name}</span>
-        &plus;
-        &euro;&nbsp;<span class="event__offer-price">${offer.price}</span>
-      </label>
-    </div>`).join(``);
+  _createEventOffersTemplate(offers, offersChecked, eventType) {
+    // ${name in offersChecked ? `checked` : ``}
+
+    let offersTemplate = ``;
+
+    offers.forEach((it) => {
+      if (it.type === eventType && it.offers.length > 0) {
+        const eventOffersTemplate = it.offers.map((offer) => {
+          const {title, price} = offer;
+
+          return `<div class="event__offer-selector">
+            <input class="event__offer-checkbox  visually-hidden" id="event-offer-${eventType}-${price}-1" type="checkbox" name="event-offer-${eventType}-${price}">
+            <label class="event__offer-label" for="event-offer-${eventType}-${price}-1">
+              <span class="event__offer-title">${title}</span>
+              &plus;
+              &euro;&nbsp;<span class="event__offer-price">${price}</span>
+            </label>
+          </div>`;
+        }).join(``);
+
+        offersTemplate = `<section class="event__details">
+      <section class="event__section  event__section--offers">
+      <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+
+      <div class="event__available-offers">
+        ${eventOffersTemplate}
+      </div>
+      </section>`;
+      }
+    });
+
+    return offersTemplate;
   }
 
-  _createTripEventEditTemplate(data) {
+  _createTripEventEditTemplate(data, allOffers) {
     const {event, city, offers, description, photos, timeIn, timeOut, price, isFavorite} = data;
     const isActionAddTrip = this._userAction === UserAction.ADD_TRIP;
 
     const eventTypeGroupsTemplate = this._createEventTypeGroupsTemplate(generateEventType(), getEventWithoutActionName(event));
     const favoriteTemplate = isActionAddTrip ? `` : this._createFavoriteTemplate(isFavorite);
-    const offersTemplate = this._createEventOffersTemplate(OFFERS_MAP, offers);
+    const offersTemplate = this._createEventOffersTemplate(allOffers, offers, getEventWithoutActionName(event));
     const photosTemplate = this._createEventPhotosTemplate(photos);
 
     const template = `<form class="${isActionAddTrip ? `trip-events__item` : ``} event  event--edit" action="#" method="post">
@@ -167,16 +191,9 @@ class TripEventEdit extends SmartView {
           </button>`}
         </header>
 
-        ${city ? `<section class="event__details">
-          <section class="event__section  event__section--offers">
-            <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+        ${offersTemplate}
 
-            <div class="event__available-offers">
-              ${offersTemplate}
-            </div>
-          </section>
-
-          <section class="event__section  event__section&#45;&#45;destination">
+        ${city ? `<section class="event__section  event__section&#45;&#45;destination">
             <h3 class="event__section-title  event__section-title&#45;&#45;destination">Destination</h3>
             <p class="event__destination-description">${description}</p>
 
@@ -203,7 +220,7 @@ class TripEventEdit extends SmartView {
   }
 
   get _template() {
-    return this._createTripEventEditTemplate(this._data);
+    return this._createTripEventEditTemplate(this._data, this._allOffers);
   }
 
   restoreHandlers() {

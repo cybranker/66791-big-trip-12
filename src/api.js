@@ -1,3 +1,5 @@
+import TripsModel from "./model/trips.js";
+
 const Method = {
   GET: `GET`,
   PUT: `PUT`
@@ -16,6 +18,12 @@ class Api {
 
   get trips() {
     return this._load({url: `points`})
+      .then(Api.toJSON)
+      .then((trips) => trips.map(TripsModel.adaptToClient()));
+  }
+
+  get offers() {
+    return this._load({url: `offers`})
       .then(Api.toJSON);
   }
 
@@ -23,10 +31,11 @@ class Api {
     return this._load({
       url: `points/${trip.id}`,
       method: Method.PUT,
-      body: JSON.stringify(trip),
+      body: JSON.stringify(TripsModel.adaptToServer(trip)),
       headers: new Headers({"Content-Type": `application/json`})
     })
-      .then(Api.toJSON);
+      .then(Api.toJSON)
+      .then(TripsModel.adaptToClient);
   }
 
   _load({
