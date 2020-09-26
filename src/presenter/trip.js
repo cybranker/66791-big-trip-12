@@ -1,6 +1,7 @@
 import TripSortView from "../view/trip-sort.js";
 import TripListView from "../view/trip-list.js";
 import TripDayView from "../view/trip-day.js";
+import LoadingView from "../view/loading.js";
 import NoTripView from "../view/no-trips.js";
 import WaypointPresenter from "./waypoint.js";
 import TripNewPresenter from "./trip-new.js";
@@ -18,12 +19,14 @@ class Trip {
     this._eventsContainer = eventsContainer;
     this._currentSortType = SortType.DEFAULT;
     this._tripPresenter = {};
+    this._isLoading = true;
 
     this._tripSortComponent = null;
     this._tripDayComponent = null;
 
     this._tripListComponent = new TripListView();
     this._noTripComponent = new NoTripView();
+    this._loadingComponent = new LoadingView();
 
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
@@ -104,10 +107,11 @@ class Trip {
         break;
       case UpdateType.MAJOR:
         this._clearEvents({resetSortType: true});
-        // this._renderEvents();
+        this._renderEvents();
         break;
       case UpdateType.INIT:
-        this._clearEvents();
+        this._isLoading = false;
+        remove(this._loadingComponent);
         this._renderEvents();
         break;
     }
@@ -153,6 +157,10 @@ class Trip {
     render(this._eventsContainer, this._tripListComponent, RenderPosition.BEFOREEND);
   }
 
+  _renderLoading() {
+    render(this._eventsContainer, this._loadingComponent, RenderPosition.BEFOREEND);
+  }
+
   _renderNoTrip() {
     render(this._eventsContainer, this._noTripComponent, RenderPosition.BEFOREEND);
   }
@@ -191,6 +199,7 @@ class Trip {
 
     remove(this._tripSortComponent);
     remove(this._noTripComponent);
+    remove(this._loadingComponent);
     remove(this._tripListComponent);
     remove(this._tripDayComponent);
 
@@ -200,6 +209,11 @@ class Trip {
   }
 
   _renderEvents() {
+    if (this._isLoading) {
+      this._renderLoading();
+      return;
+    }
+
     const tripCount = this._trips.length;
 
     if (tripCount === 0) {

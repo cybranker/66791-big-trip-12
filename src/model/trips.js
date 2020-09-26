@@ -7,8 +7,10 @@ class Trips extends Observer {
     this._trips = [];
   }
 
-  set trips(trips) {
-    this._trips = trips.slice();
+  set trips(params) {
+    this._trips = params[1].slice();
+
+    this._notify(params[0]);
   }
 
   get trips() {

@@ -1,7 +1,7 @@
 import SmartView from "./smart.js";
 import {generateEventType} from "../mock/event-type.js";
 import {SENTENCE, OFFERS_MAP, UserAction} from "../const.js";
-import {getRandomInteger, generateOffers, generateDescription, generatePhotos} from "../mock/trip.js";
+// import {getRandomInteger, generateOffers, generateDescription, generatePhotos} from "../mock/trip.js";
 import {upperFirst, getEventWithActionName, getEventWithoutActionName, humanizeTaskDate} from "../utils/trip.js";
 import flatpickr from "flatpickr";
 import he from "he";
