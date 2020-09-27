@@ -112,6 +112,7 @@ class Trip {
       case UpdateType.INIT:
         this._isLoading = false;
         remove(this._loadingComponent);
+        this._clearEvents();
         this._renderEvents();
         break;
     }

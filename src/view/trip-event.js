@@ -15,15 +15,14 @@ class TripEvent extends AbstractView {
   }
 
   _renderOffersTrip(ofrs) {
-    const ofrsKeys = Object.keys(ofrs);
-    const quantityOffers = ofrsKeys.length <= MAX_RENDER_OFFERS_TRIP ? ofrsKeys.length : MAX_RENDER_OFFERS_TRIP;
+    const quantityOffers = ofrs.length <= MAX_RENDER_OFFERS_TRIP ? ofrs.length : MAX_RENDER_OFFERS_TRIP;
     let offersTripTemplate = ``;
 
     for (let i = 0; i < quantityOffers; i++) {
       offersTripTemplate += `<li class="event__offer">
-      <span class="event__offer-title">${ofrs[ofrsKeys[i]].name}</span>
+      <span class="event__offer-title">${ofrs[i].title}</span>
       &plus;
-      &euro;&nbsp;<span class="event__offer-price">${ofrs[ofrsKeys[i]].price}</span>
+      &euro;&nbsp;<span class="event__offer-price">${ofrs[i].price}</span>
      </li>`;
     }
 

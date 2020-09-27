@@ -19,7 +19,7 @@ class Api {
   get trips() {
     return this._load({url: `points`})
       .then(Api.toJSON)
-      .then((trips) => trips.map(TripsModel.adaptToClient()));
+      .then((trips) => trips.map(TripsModel.adaptToClient));
   }
 
   get offers() {
