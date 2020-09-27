@@ -11,10 +11,11 @@ import {filter} from "../utils/filter.js";
 import {SortType, UpdateType, UserAction} from "../const.js";
 
 class Trip {
-  constructor(eventsContainer, tripsModel, filterModel, offersModel) {
+  constructor(eventsContainer, tripsModel, filterModel, offersModel, destinationsModel) {
     this._tripsModel = tripsModel;
     this._filterModel = filterModel;
     this._offersModel = offersModel;
+    this._destinationsModel = destinationsModel;
 
     this._eventsContainer = eventsContainer;
     this._currentSortType = SortType.DEFAULT;
@@ -40,6 +41,7 @@ class Trip {
     this._tripsModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
     this._offersModel.addObserver(this._handleModelEvent);
+    this._destinationsModel.addObserver(this._handleModelEvent);
 
     this._renderEvents();
   }
@@ -50,6 +52,7 @@ class Trip {
     this._tripsModel.removeObserver(this._handleModelEvent);
     this._filterModel.removeObserver(this._handleModelEvent);
     this._offersModel.removeObserver(this._handleModelEvent);
+    this._destinationsModel.removeObserver(this._handleModelEvent);
   }
 
   createTrip(callback) {
@@ -73,6 +76,10 @@ class Trip {
 
   get _offers() {
     return this._offersModel.offers;
+  }
+
+  get _destinations() {
+    return this._destinationsModel.destinations;
   }
 
   _handleModeChange() {
@@ -150,7 +157,7 @@ class Trip {
 
   _renderTrip(element, trip) {
     const waypointPresenter = new WaypointPresenter(element, this._eventsContainer, this._handleViewAction, this._handleModeChange);
-    waypointPresenter.init(trip, this._offers);
+    waypointPresenter.init(trip, this._offers, this._destinations);
     this._tripPresenter[trip.id] = waypointPresenter;
   }
 

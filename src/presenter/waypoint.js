@@ -26,15 +26,14 @@ class Waypoint {
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
   }
 
-  init(trip, offers) {
+  init(trip, offers, destinations) {
     this._trip = trip;
-    this._offers = offers;
 
     const prevTripEventComponent = this._tripEventComponent;
     const prevTripEventEditComponent = this._tripEventEditComponent;
 
     this._tripEventComponent = new TripEventView(trip);
-    this._tripEventEditComponent = new TripEventEditView(UserAction.UPDATE_TRIP, offers, trip);
+    this._tripEventEditComponent = new TripEventEditView(UserAction.UPDATE_TRIP, offers, destinations, trip);
 
     this._tripEventComponent.editClickHandler = this._handleEditClick;
     this._tripEventEditComponent.favoriteClickHandler = this._handleFavoriteClick;

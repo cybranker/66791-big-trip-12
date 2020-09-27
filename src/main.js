@@ -6,6 +6,7 @@ import FilterPresenter from "./presenter/filter.js";
 import TripsModel from "./model/trips.js";
 import FilterModel from "./model/filter.js";
 import OffersModel from "./model/offers";
+import DestinationsModel from "./model/destinations.js";
 import {render, RenderPosition, remove} from "./utils/render.js";
 import {MenuItem, UpdateType, FilterType} from "./const.js";
 import Api from "./api.js";
@@ -22,11 +23,12 @@ const api = new Api(END_POINT, AUTHORIZATION);
 const tripsModel = new TripsModel();
 const filterModel = new FilterModel();
 const offersModel = new OffersModel();
+const destinationsModel = new DestinationsModel();
 
 const tripMenuComponent = new TripMenuView();
 
 const filterPresenter = new FilterPresenter(tripControlsElement, filterModel, tripsModel);
-const tripPresenter = new TripPresenter(siteMainElement, tripsModel, filterModel, offersModel);
+const tripPresenter = new TripPresenter(siteMainElement, tripsModel, filterModel, offersModel, destinationsModel);
 
 const handleTripNewFormClose = () => {
   tripMenuComponent.menuItem = MenuItem.TABLE;
@@ -76,6 +78,19 @@ api.offers
     const params = [UpdateType.INIT, []];
 
     offersModel.offers = params;
+  });
+
+api.destinations
+  .then((destinations) => {
+    console.log(`destination`, destinations);
+    const params = [UpdateType.INIT, destinations];
+
+    destinationsModel.destinations = params;
+  })
+  .catch(() => {
+    const params = [UpdateType.INIT, []];
+
+    destinationsModel.destinations = params;
   });
 
 api.trips

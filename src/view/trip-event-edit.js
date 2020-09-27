@@ -21,10 +21,11 @@ const BLANK_TRIP = {
 };
 
 class TripEventEdit extends SmartView {
-  constructor(userAction, offers, trip = BLANK_TRIP) {
+  constructor(userAction, offers, destination, trip = BLANK_TRIP) {
     super();
     this._data = trip;
     this._allOffers = offers;
+    this._allDestination = destination;
     this._userAction = userAction;
     this._datepickerTimeIn = null;
     this._datepickerTimeOut = null;
@@ -124,9 +125,10 @@ class TripEventEdit extends SmartView {
     return offersTemplate;
   }
 
-  _createTripEventEditTemplate(data, allOffers) {
+  _createTripEventEditTemplate(data, allOffers, allDestination) {
     const {event, city, offers, description, photos, timeIn, timeOut, price, isFavorite} = data;
     const isActionAddTrip = this._userAction === UserAction.ADD_TRIP;
+    console.log(`allDestination`, allDestination);
 
     const eventTypeGroupsTemplate = this._createEventTypeGroupsTemplate(generateEventType(), getEventWithoutActionName(event));
     const favoriteTemplate = isActionAddTrip ? `` : this._createFavoriteTemplate(isFavorite);
@@ -218,7 +220,7 @@ class TripEventEdit extends SmartView {
   }
 
   get _template() {
-    return this._createTripEventEditTemplate(this._data, this._allOffers);
+    return this._createTripEventEditTemplate(this._data, this._allOffers, this._allDestination);
   }
 
   restoreHandlers() {

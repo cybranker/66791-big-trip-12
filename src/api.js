@@ -27,6 +27,11 @@ class Api {
       .then(Api.toJSON);
   }
 
+  get destinations() {
+    return this._load({url: `destinations`})
+      .then(Api.toJSON);
+  }
+
   updateTrip(trip) {
     return this._load({
       url: `points/${trip.id}`,
