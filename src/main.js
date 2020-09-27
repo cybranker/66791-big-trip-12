@@ -82,7 +82,6 @@ api.offers
 
 api.destinations
   .then((destinations) => {
-    console.log(`destination`, destinations);
     const params = [UpdateType.INIT, destinations];
 
     destinationsModel.destinations = params;

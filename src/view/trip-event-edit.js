@@ -1,7 +1,6 @@
 import SmartView from "./smart.js";
 import {generateEventType} from "../mock/event-type.js";
-import {SENTENCE, OFFERS_MAP, UserAction} from "../const.js";
-// import {getRandomInteger, generateOffers, generateDescription, generatePhotos} from "../mock/trip.js";
+import {UserAction} from "../const.js";
 import {upperFirst, getEventWithActionName, getEventWithoutActionName, humanizeTaskDate} from "../utils/trip.js";
 import flatpickr from "flatpickr";
 import he from "he";
@@ -21,11 +20,11 @@ const BLANK_TRIP = {
 };
 
 class TripEventEdit extends SmartView {
-  constructor(userAction, offers, destination, trip = BLANK_TRIP) {
+  constructor(userAction, offers, destinations, trip = BLANK_TRIP) {
     super();
     this._data = trip;
     this._allOffers = offers;
-    this._allDestination = destination;
+    this._allDestinations = destinations;
     this._userAction = userAction;
     this._datepickerTimeIn = null;
     this._datepickerTimeOut = null;
@@ -125,15 +124,19 @@ class TripEventEdit extends SmartView {
     return offersTemplate;
   }
 
-  _createTripEventEditTemplate(data, allOffers, allDestination) {
+  _createDestinationTemplate(destinations) {
+    return destinations.map((destination) => `<option value="${destination.name}"></option>`).join(``);
+  }
+
+  _createTripEventEditTemplate(data, allOffers, allDestinations) {
     const {event, city, offers, description, photos, timeIn, timeOut, price, isFavorite} = data;
     const isActionAddTrip = this._userAction === UserAction.ADD_TRIP;
-    console.log(`allDestination`, allDestination);
 
     const eventTypeGroupsTemplate = this._createEventTypeGroupsTemplate(generateEventType(), getEventWithoutActionName(event));
     const favoriteTemplate = isActionAddTrip ? `` : this._createFavoriteTemplate(isFavorite);
     const offersTemplate = this._createEventOffersTemplate(allOffers, offers, getEventWithoutActionName(event));
     const photosTemplate = this._createEventPhotosTemplate(photos);
+    const destinationsTemplate = this._createDestinationTemplate(allDestinations);
 
     const template = `<form class="${isActionAddTrip ? `trip-events__item` : ``} event  event--edit" action="#" method="post">
         <header class="event__header">
@@ -155,9 +158,7 @@ class TripEventEdit extends SmartView {
             </label>
             <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(city)}" list="destination-list-1">
             <datalist id="destination-list-1">
-              <option value="Amsterdam"></option>
-              <option value="Geneva"></option>
-              <option value="Chamonix"></option>
+              ${destinationsTemplate}
             </datalist>
           </div>
 
@@ -220,7 +221,7 @@ class TripEventEdit extends SmartView {
   }
 
   get _template() {
-    return this._createTripEventEditTemplate(this._data, this._allOffers, this._allDestination);
+    return this._createTripEventEditTemplate(this._data, this._allOffers, this._allDestinations);
   }
 
   restoreHandlers() {
@@ -295,12 +296,22 @@ class TripEventEdit extends SmartView {
 
   _eventDestinationChangeHandler(evt) {
     evt.preventDefault();
-    this.updateData({
-      city: evt.target.value,
-      offers: Object.fromEntries(generateOffers(OFFERS_MAP)),
-      description: generateDescription(SENTENCE),
-      photos: generatePhotos(getRandomInteger(1, 6))
-    });
+
+    const cityName = evt.target.value;
+
+    if (cityName) {
+      const {name, description, pictures} = this._allDestinations.filter((destinationCheck) => destinationCheck.name === cityName)[0];
+
+      this.updateData({
+        city: name,
+        description,
+        photos: pictures
+      });
+    } else {
+      this.updateData({
+        city: cityName
+      });
+    }
   }
 
   set formSubmitHandler(callback) {
