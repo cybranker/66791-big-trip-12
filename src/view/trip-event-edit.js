@@ -89,12 +89,10 @@ class TripEventEdit extends SmartView {
   }
 
   _createEventPhotosTemplate(photos) {
-    return photos.map((photo) => `<img class="event__photo" src="${photo}" alt="Event photo">`).join(``);
+    return photos.map((photo) => `<img class="event__photo" src="${photo.src}" alt="${photo.description}">`).join(``);
   }
 
   _createEventOffersTemplate(offers, offersChecked, eventType) {
-    // ${name in offersChecked ? `checked` : ``}
-
     let offersTemplate = ``;
 
     offers.forEach((it) => {
@@ -103,7 +101,7 @@ class TripEventEdit extends SmartView {
           const {title, price} = offer;
 
           return `<div class="event__offer-selector">
-            <input class="event__offer-checkbox  visually-hidden" id="event-offer-${eventType}-${price}-1" type="checkbox" name="event-offer-${eventType}-${price}">
+            <input class="event__offer-checkbox  visually-hidden" id="event-offer-${eventType}-${price}-1" type="checkbox" name="event-offer-${eventType}-${price}" ${offersChecked.some((offerCheck) => offerCheck.title === title) ? `checked` : ``}>
             <label class="event__offer-label" for="event-offer-${eventType}-${price}-1">
               <span class="event__offer-title">${title}</span>
               &plus;
