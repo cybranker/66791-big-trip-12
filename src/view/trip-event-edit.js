@@ -303,7 +303,7 @@ class TripEventEdit extends SmartView {
     evt.preventDefault();
 
     this.updateData({
-      isFavorite: evt.target.checked ? true : false
+      isFavorite: evt.target.checked
     });
   }
 
