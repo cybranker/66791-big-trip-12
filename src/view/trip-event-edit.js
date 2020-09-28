@@ -28,6 +28,7 @@ class TripEventEdit extends SmartView {
     this._userAction = userAction;
     this._datepickerTimeIn = null;
     this._datepickerTimeOut = null;
+    this._offers = [];
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
@@ -37,6 +38,7 @@ class TripEventEdit extends SmartView {
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._eventTypeChangeHandler = this._eventTypeChangeHandler.bind(this);
     this._priceInputHandler = this._priceInputHandler.bind(this);
+    this._offersChangeHandler = this._offersChangeHandler.bind(this);
     this._eventDestinationChangeHandler = this._eventDestinationChangeHandler.bind(this);
 
     this._setInnerHandlers();
@@ -103,7 +105,7 @@ class TripEventEdit extends SmartView {
           const {title, price} = offer;
 
           return `<div class="event__offer-selector">
-            <input class="event__offer-checkbox  visually-hidden" id="event-offer-${eventType}-${price}-1" type="checkbox" name="event-offer-${eventType}-${price}" ${offersChecked.some((offerCheck) => offerCheck.title === title) ? `checked` : ``}>
+            <input class="event__offer-checkbox  visually-hidden" id="event-offer-${eventType}-${price}-1" type="checkbox" value="${price}" data-title="${title}" name="event-offer-${eventType}-${price}" ${offersChecked.some((offerCheck) => offerCheck.title === title) ? `checked` : ``}>
             <label class="event__offer-label" for="event-offer-${eventType}-${price}-1">
               <span class="event__offer-title">${title}</span>
               &plus;
@@ -276,6 +278,11 @@ class TripEventEdit extends SmartView {
     this.element
       .querySelector(`.event__input--price`)
       .addEventListener(`input`, this._priceInputHandler);
+    if (this.element.querySelector(`.event__available-offers`)) {
+      this.element
+        .querySelector(`.event__available-offers`)
+        .addEventListener(`change`, this._offersChangeHandler);
+    }
   }
 
   _timeInChangeHandler([userData]) {
@@ -296,6 +303,21 @@ class TripEventEdit extends SmartView {
     if (evt.target && evt.target.matches(`[name="event-type"]`)) {
       this.updateData({
         event: getEventWithActionName(evt.target.value)
+      });
+    }
+  }
+
+  _offersChangeHandler(evt) {
+    evt.preventDefault();
+
+    if (evt.target && evt.target.matches(`.event__offer-checkbox`)) {
+      this._offers.push({
+        title: evt.target.dataset.title,
+        price: evt.target.value
+      });
+
+      this.updateData({
+        offers: this._offers
       });
     }
   }
