@@ -312,15 +312,19 @@ class TripEventEdit extends SmartView {
 
   _offersChangeHandler(evt) {
     evt.preventDefault();
+    let offerPrice = null;
 
     if (evt.target && evt.target.matches(`.event__offer-checkbox`)) {
       if (evt.target.checked) {
+        offerPrice = parseInt(evt.target.value, 10);
+
         this._offers.push({
           title: evt.target.dataset.title,
-          price: parseInt(evt.target.value, 10)
+          price: offerPrice
         });
       } else {
         const index = this._offers.findIndex((it) => it.title === evt.target.dataset.title);
+        offerPrice = -parseInt(evt.target.value, 10);
 
         if (index !== -1) {
           this._offers.splice(index, 1);
@@ -328,7 +332,8 @@ class TripEventEdit extends SmartView {
       }
 
       this.updateData({
-        offers: this._offers
+        offers: this._offers,
+        price: this._data.price + offerPrice
       });
     }
   }
