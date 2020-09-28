@@ -88,7 +88,7 @@ class Trips extends Observer {
         {},
         trip,
         {
-          'base_price': trip.price,
+          'base_price': parseInt(trip.price, 10),
           'date_from': trip.timeIn instanceof Date ? trip.timeIn.toISOString() : null,
           'date_to': trip.timeOut instanceof Date ? trip.timeOut.toISOString() : null,
           'destination': {

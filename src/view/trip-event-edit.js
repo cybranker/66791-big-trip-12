@@ -313,7 +313,7 @@ class TripEventEdit extends SmartView {
     if (evt.target && evt.target.matches(`.event__offer-checkbox`)) {
       this._offers.push({
         title: evt.target.dataset.title,
-        price: evt.target.value
+        price: parseInt(evt.target.value, 10)
       });
 
       this.updateData({

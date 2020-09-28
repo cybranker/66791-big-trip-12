@@ -11,7 +11,7 @@ import {filter} from "../utils/filter.js";
 import {SortType, UpdateType, UserAction} from "../const.js";
 
 class Trip {
-  constructor(eventsContainer, tripsModel, filterModel, offersModel, destinationsModel) {
+  constructor(eventsContainer, tripsModel, filterModel, offersModel, destinationsModel, api) {
     this._tripsModel = tripsModel;
     this._filterModel = filterModel;
     this._offersModel = offersModel;
@@ -21,6 +21,7 @@ class Trip {
     this._currentSortType = SortType.DEFAULT;
     this._tripPresenter = {};
     this._isLoading = true;
+    this._api = api;
 
     this._tripSortComponent = null;
     this._tripDayComponent = null;
@@ -92,7 +93,9 @@ class Trip {
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
       case UserAction.UPDATE_TRIP:
-        this._tripsModel.updateTrip(updateType, update);
+        this._api.updateTrip(update).then((response) => {
+          this._tripsModel.updateTrip(updateType, response);
+        });
         break;
       case UserAction.ADD_TRIP:
         this._tripsModel.addTrip(updateType, update);

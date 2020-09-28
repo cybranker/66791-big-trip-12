@@ -28,7 +28,7 @@ const destinationsModel = new DestinationsModel();
 const tripMenuComponent = new TripMenuView();
 
 const filterPresenter = new FilterPresenter(tripControlsElement, filterModel, tripsModel);
-const tripPresenter = new TripPresenter(siteMainElement, tripsModel, filterModel, offersModel, destinationsModel);
+const tripPresenter = new TripPresenter(siteMainElement, tripsModel, filterModel, offersModel, destinationsModel, api);
 
 const handleTripNewFormClose = () => {
   tripMenuComponent.menuItem = MenuItem.TABLE;
