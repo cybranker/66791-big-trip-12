@@ -10,7 +10,7 @@ import "../../node_modules/flatpickr/dist/flatpickr.min.css";
 const BLANK_TRIP = {
   event: `Taxi to`,
   city: ``,
-  offers: {},
+  offers: [],
   description: ``,
   photos: [],
   timeIn: new Date(new Date().setHours(0, 0)),
@@ -36,6 +36,7 @@ class TripEventEdit extends SmartView {
     this._timeOutChangeHandler = this._timeOutChangeHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._eventTypeChangeHandler = this._eventTypeChangeHandler.bind(this);
+    this._priceInputHandler = this._priceInputHandler.bind(this);
     this._eventDestinationChangeHandler = this._eventDestinationChangeHandler.bind(this);
 
     this._setInnerHandlers();
@@ -272,6 +273,9 @@ class TripEventEdit extends SmartView {
     this.element
       .querySelector(`input[name="event-destination"]`)
       .addEventListener(`change`, this._eventDestinationChangeHandler);
+    this.element
+      .querySelector(`.event__input--price`)
+      .addEventListener(`input`, this._priceInputHandler);
   }
 
   _timeInChangeHandler([userData]) {
@@ -294,6 +298,14 @@ class TripEventEdit extends SmartView {
         event: getEventWithActionName(evt.target.value)
       });
     }
+  }
+
+  _priceInputHandler(evt) {
+    evt.preventDefault();
+
+    this.updateData({
+      price: evt.target.value
+    });
   }
 
   _eventDestinationChangeHandler(evt) {
