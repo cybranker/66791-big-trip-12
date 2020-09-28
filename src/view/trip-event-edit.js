@@ -301,8 +301,11 @@ class TripEventEdit extends SmartView {
     evt.preventDefault();
 
     if (evt.target && evt.target.matches(`[name="event-type"]`)) {
+      this._offers = [];
+
       this.updateData({
-        event: getEventWithActionName(evt.target.value)
+        event: getEventWithActionName(evt.target.value),
+        offers: this._offers
       });
     }
   }
