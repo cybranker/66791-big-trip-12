@@ -35,7 +35,7 @@ class TripEventEdit extends SmartView {
     this._formRollupClickHandler = this._formRollupClickHandler.bind(this);
     this._timeInChangeHandler = this._timeInChangeHandler.bind(this);
     this._timeOutChangeHandler = this._timeOutChangeHandler.bind(this);
-    this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
+    this._favoriteChangeHandler = this._favoriteChangeHandler.bind(this);
     this._eventTypeChangeHandler = this._eventTypeChangeHandler.bind(this);
     this._priceChangeHandler = this._priceChangeHandler.bind(this);
     this._offersChangeHandler = this._offersChangeHandler.bind(this);
@@ -83,7 +83,7 @@ class TripEventEdit extends SmartView {
   }
 
   _createFavoriteTemplate(favorite) {
-    return `<input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${favorite ? `checked` : ``}>
+    return `<input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" value="${favorite}" name="event-favorite" ${favorite ? `checked` : ``}>
       <label class="event__favorite-btn" for="event-favorite-1">
         <span class="visually-hidden">Add to favorite</span>
         <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -219,11 +219,6 @@ class TripEventEdit extends SmartView {
     this._callback.formSubmit(this._data);
   }
 
-  _favoriteClickHandler(evt) {
-    evt.preventDefault();
-    this._callback.favoriteClick();
-  }
-
   get _template() {
     return this._createTripEventEditTemplate(this._data, this._allOffers, this._allDestinations);
   }
@@ -278,10 +273,17 @@ class TripEventEdit extends SmartView {
     this.element
       .querySelector(`.event__input--price`)
       .addEventListener(`change`, this._priceChangeHandler);
+
     if (this.element.querySelector(`.event__available-offers`)) {
       this.element
         .querySelector(`.event__available-offers`)
         .addEventListener(`change`, this._offersChangeHandler);
+    }
+
+    if (this.element.querySelector(`.event__favorite-btn`)) {
+      this.element
+        .querySelector(`.event__favorite-checkbox`)
+        .addEventListener(`change`, this._favoriteChangeHandler);
     }
   }
 
@@ -294,6 +296,14 @@ class TripEventEdit extends SmartView {
   _timeOutChangeHandler([userData]) {
     this.updateData({
       timeOut: userData
+    });
+  }
+
+  _favoriteChangeHandler(evt) {
+    evt.preventDefault();
+
+    this.updateData({
+      isFavorite: evt.target.checked ? true : false
     });
   }
 
@@ -370,11 +380,6 @@ class TripEventEdit extends SmartView {
     this._callback.formSubmit = callback;
     const element = (this._userAction === UserAction.ADD_TRIP) ? this.element : this.element.querySelector(`form`);
     element.addEventListener(`submit`, this._formSubmitHandler);
-  }
-
-  set favoriteClickHandler(callback) {
-    this._callback.favoriteClick = callback;
-    this.element.querySelector(`.event__favorite-btn`).addEventListener(`click`, this._favoriteClickHandler);
   }
 
   _formDeleteClickHandler(evt) {
