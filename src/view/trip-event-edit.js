@@ -28,7 +28,7 @@ class TripEventEdit extends SmartView {
     this._userAction = userAction;
     this._datepickerTimeIn = null;
     this._datepickerTimeOut = null;
-    this._offers = [];
+    this._offers = trip.offers;
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
@@ -37,7 +37,7 @@ class TripEventEdit extends SmartView {
     this._timeOutChangeHandler = this._timeOutChangeHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._eventTypeChangeHandler = this._eventTypeChangeHandler.bind(this);
-    this._priceInputHandler = this._priceInputHandler.bind(this);
+    this._priceChangeHandler = this._priceChangeHandler.bind(this);
     this._offersChangeHandler = this._offersChangeHandler.bind(this);
     this._eventDestinationChangeHandler = this._eventDestinationChangeHandler.bind(this);
 
@@ -101,12 +101,12 @@ class TripEventEdit extends SmartView {
 
     offers.forEach((it) => {
       if (it.type === eventType && it.offers.length > 0) {
-        const eventOffersTemplate = it.offers.map((offer) => {
+        const eventOffersTemplate = it.offers.map((offer, index) => {
           const {title, price} = offer;
 
           return `<div class="event__offer-selector">
-            <input class="event__offer-checkbox  visually-hidden" id="event-offer-${eventType}-${price}-1" type="checkbox" value="${price}" data-title="${title}" name="event-offer-${eventType}-${price}" ${offersChecked.some((offerCheck) => offerCheck.title === title) ? `checked` : ``}>
-            <label class="event__offer-label" for="event-offer-${eventType}-${price}-1">
+            <input class="event__offer-checkbox  visually-hidden" id="event-offer-${eventType}-${index}" type="checkbox" value="${price}" data-title="${title}" name="event-offer-${eventType}-${index}" ${offersChecked.some((offerCheck) => offerCheck.title === title) ? `checked` : ``}>
+            <label class="event__offer-label" for="event-offer-${eventType}-${index}">
               <span class="event__offer-title">${title}</span>
               &plus;
               &euro;&nbsp;<span class="event__offer-price">${price}</span>
@@ -277,7 +277,7 @@ class TripEventEdit extends SmartView {
       .addEventListener(`change`, this._eventDestinationChangeHandler);
     this.element
       .querySelector(`.event__input--price`)
-      .addEventListener(`input`, this._priceInputHandler);
+      .addEventListener(`change`, this._priceChangeHandler);
     if (this.element.querySelector(`.event__available-offers`)) {
       this.element
         .querySelector(`.event__available-offers`)
@@ -311,10 +311,18 @@ class TripEventEdit extends SmartView {
     evt.preventDefault();
 
     if (evt.target && evt.target.matches(`.event__offer-checkbox`)) {
-      this._offers.push({
-        title: evt.target.dataset.title,
-        price: parseInt(evt.target.value, 10)
-      });
+      if (evt.target.checked) {
+        this._offers.push({
+          title: evt.target.dataset.title,
+          price: parseInt(evt.target.value, 10)
+        });
+      } else {
+        const index = this._offers.findIndex((it) => it.title === evt.target.dataset.title);
+
+        if (index !== -1) {
+          this._offers.splice(index, 1);
+        }
+      }
 
       this.updateData({
         offers: this._offers
@@ -322,7 +330,7 @@ class TripEventEdit extends SmartView {
     }
   }
 
-  _priceInputHandler(evt) {
+  _priceChangeHandler(evt) {
     evt.preventDefault();
 
     this.updateData({
