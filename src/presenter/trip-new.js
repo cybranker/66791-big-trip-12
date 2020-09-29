@@ -48,13 +48,19 @@ class TripNew {
     document.removeEventListener(`keydown`, this._escKeyDownHandler);
   }
 
+  setSaving() {
+    this._tripEventEditComponent.updateData({
+      isDisabled: true,
+      isSaving: true
+    });
+  }
+
   _handleFormSubmit(trip) {
     this._changeData(
         UserAction.ADD_TRIP,
         UpdateType.MINOR,
         trip
     );
-    this.destroy();
   }
 
   _handleDeleteClick() {
