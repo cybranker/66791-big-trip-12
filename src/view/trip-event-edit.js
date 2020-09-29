@@ -15,7 +15,7 @@ const BLANK_TRIP = {
   photos: [],
   timeIn: new Date(new Date().setHours(0, 0)),
   timeOut: new Date(new Date().setHours(0, 0)),
-  price: `0`,
+  price: 0,
   isFavorite: false
 };
 
@@ -400,7 +400,10 @@ class TripEventEdit extends SmartView {
 
   set rollupClickHandler(callback) {
     this._callback.rollupClick = callback;
-    this.element.querySelector(`.event__rollup-btn`).addEventListener(`click`, this._formRollupClickHandler);
+
+    if (this.element.querySelector(`.event__rollup-btn`)) {
+      this.element.querySelector(`.event__rollup-btn`).addEventListener(`click`, this._formRollupClickHandler);
+    }
   }
 }
 

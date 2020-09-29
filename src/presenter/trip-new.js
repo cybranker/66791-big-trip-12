@@ -4,9 +4,11 @@ import {remove, render, RenderPosition} from "../utils/render.js";
 import {UserAction, UpdateType} from "../const.js";
 
 class TripNew {
-  constructor(eventsContainer, changeData) {
+  constructor(eventsContainer, changeData, offers, destinations) {
     this._eventsContainer = eventsContainer;
     this._changeData = changeData;
+    this._offers = offers;
+    this._destinations = destinations;
 
     this._tripEventEditComponent = null;
     this._destroyCallback = null;
@@ -23,7 +25,7 @@ class TripNew {
       return;
     }
 
-    this._tripEventEditComponent = new TripEventEditView(UserAction.ADD_TRIP);
+    this._tripEventEditComponent = new TripEventEditView(UserAction.ADD_TRIP, this._offers, this._destinations);
     this._tripEventEditComponent.formSubmitHandler = this._handleFormSubmit;
     this._tripEventEditComponent.deleteClickHandler = this._handleDeleteClick;
 

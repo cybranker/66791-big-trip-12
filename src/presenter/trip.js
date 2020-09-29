@@ -34,8 +34,6 @@ class Trip {
     this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
-
-    this._tripNewPresenter = new TripNewPresenter(this._eventsContainer, this._handleViewAction);
   }
 
   init() {
@@ -43,6 +41,8 @@ class Trip {
     this._filterModel.addObserver(this._handleModelEvent);
     this._offersModel.addObserver(this._handleModelEvent);
     this._destinationsModel.addObserver(this._handleModelEvent);
+
+    this._tripNewPresenter = new TripNewPresenter(this._eventsContainer, this._handleViewAction, this._offers, this._destinations);
 
     this._renderEvents();
   }
