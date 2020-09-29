@@ -63,8 +63,6 @@ const handleSiteMenuClick = (menuItem) => {
   }
 };
 
-render(siteHeaderElement, new TripInfoView(), RenderPosition.AFTERBEGIN);
-
 filterPresenter.init();
 tripPresenter.init();
 
