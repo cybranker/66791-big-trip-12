@@ -28,7 +28,7 @@ class TripEventEdit extends SmartView {
     this._userAction = userAction;
     this._datepickerTimeIn = null;
     this._datepickerTimeOut = null;
-    this._offers = trip.offers;
+    this._offers = trip.offers.slice();
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
@@ -60,6 +60,7 @@ class TripEventEdit extends SmartView {
   }
 
   reset(trip) {
+    this._offers = trip.offers.slice();
     this.updateData(
         trip
     );
