@@ -1,4 +1,3 @@
-import TripInfoView from "./view/trip-info.js";
 import TripMenuView from "./view/trip-menu.js";
 import StatisticsView from "./view/statistics.js";
 import TripPresenter from "./presenter/trip.js";
