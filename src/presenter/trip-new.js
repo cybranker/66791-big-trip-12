@@ -1,5 +1,4 @@
 import TripEventEditView from "../view/trip-event-edit.js";
-import {generateId} from "../utils/trip.js";
 import {remove, render, RenderPosition} from "../utils/render.js";
 import {UserAction, UpdateType} from "../const.js";
 
@@ -53,7 +52,7 @@ class TripNew {
     this._changeData(
         UserAction.ADD_TRIP,
         UpdateType.MINOR,
-        Object.assign({id: generateId()}, trip)
+        trip
     );
     this.destroy();
   }

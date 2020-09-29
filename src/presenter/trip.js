@@ -98,10 +98,14 @@ class Trip {
         });
         break;
       case UserAction.ADD_TRIP:
-        this._tripsModel.addTrip(updateType, update);
+        this._api.addTrip(update).then((response) => {
+          this._tripsModel.addTrip(updateType, response);
+        });
         break;
       case UserAction.DELETE_TRIP:
-        this._tripsModel.deleteTrip(updateType, update);
+        this._api.deleteTrip(update).then(() => {
+          this._tripsModel.deleteTrip(updateType, update);
+        });
         break;
     }
   }
