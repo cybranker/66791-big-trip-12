@@ -52,8 +52,6 @@ const sortByTimeIn = (trips) => trips.sort((a, b) => {
   return a - b;
 });
 
-const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
-
 export {
   getEventWithoutActionName,
   getEventWithActionName,
@@ -62,6 +60,5 @@ export {
   dateTimeFormat,
   sortTripTime,
   sortTripPrice,
-  sortByTimeIn,
-  generateId
+  sortByTimeIn
 };

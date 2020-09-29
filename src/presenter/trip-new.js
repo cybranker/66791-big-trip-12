@@ -1,12 +1,13 @@
 import TripEventEditView from "../view/trip-event-edit.js";
-import {generateId} from "../utils/trip.js";
 import {remove, render, RenderPosition} from "../utils/render.js";
 import {UserAction, UpdateType} from "../const.js";
 
 class TripNew {
-  constructor(eventsContainer, changeData) {
+  constructor(eventsContainer, changeData, offers, destinations) {
     this._eventsContainer = eventsContainer;
     this._changeData = changeData;
+    this._offers = offers;
+    this._destinations = destinations;
 
     this._tripEventEditComponent = null;
     this._destroyCallback = null;
@@ -23,7 +24,7 @@ class TripNew {
       return;
     }
 
-    this._tripEventEditComponent = new TripEventEditView(UserAction.ADD_TRIP);
+    this._tripEventEditComponent = new TripEventEditView(UserAction.ADD_TRIP, this._offers, this._destinations);
     this._tripEventEditComponent.formSubmitHandler = this._handleFormSubmit;
     this._tripEventEditComponent.deleteClickHandler = this._handleDeleteClick;
 
@@ -47,13 +48,31 @@ class TripNew {
     document.removeEventListener(`keydown`, this._escKeyDownHandler);
   }
 
+  setSaving() {
+    this._tripEventEditComponent.updateData({
+      isDisabled: true,
+      isSaving: true
+    });
+  }
+
+  setAborting() {
+    const resetFormState = () => {
+      this._tripEventEditComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false
+      });
+    };
+
+    this._tripEventEditComponent.shake(resetFormState);
+  }
+
   _handleFormSubmit(trip) {
     this._changeData(
         UserAction.ADD_TRIP,
         UpdateType.MINOR,
-        Object.assign({id: generateId()}, trip)
+        trip
     );
-    this.destroy();
   }
 
   _handleDeleteClick() {

@@ -3,7 +3,7 @@ import TripListView from "../view/trip-list.js";
 import TripDayView from "../view/trip-day.js";
 import LoadingView from "../view/loading.js";
 import NoTripView from "../view/no-trips.js";
-import WaypointPresenter from "./waypoint.js";
+import WaypointPresenter, {State as WaypointPresenterViewState} from "./waypoint.js";
 import TripNewPresenter from "./trip-new.js";
 import {render, RenderPosition, remove} from "../utils/render.js";
 import {sortTripTime, sortTripPrice, sortByTimeIn} from "../utils/trip.js";
@@ -34,8 +34,6 @@ class Trip {
     this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
-
-    this._tripNewPresenter = new TripNewPresenter(this._eventsContainer, this._handleViewAction);
   }
 
   init() {
@@ -43,6 +41,8 @@ class Trip {
     this._filterModel.addObserver(this._handleModelEvent);
     this._offersModel.addObserver(this._handleModelEvent);
     this._destinationsModel.addObserver(this._handleModelEvent);
+
+    this._tripNewPresenter = new TripNewPresenter(this._eventsContainer, this._handleViewAction, this._offers, this._destinations);
 
     this._renderEvents();
   }
@@ -93,15 +93,34 @@ class Trip {
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
       case UserAction.UPDATE_TRIP:
-        this._api.updateTrip(update).then((response) => {
-          this._tripsModel.updateTrip(updateType, response);
-        });
+        this._tripPresenter[update.id].setViewState(WaypointPresenterViewState.SAVING);
+        this._api.updateTrip(update)
+          .then((response) => {
+            this._tripsModel.updateTrip(updateType, response);
+          })
+          .catch(() => {
+            this._tripPresenter[update.id].setViewState(WaypointPresenterViewState.ABORTING);
+          });
         break;
       case UserAction.ADD_TRIP:
-        this._tripsModel.addTrip(updateType, update);
+        this._tripNewPresenter.setSaving();
+        this._api.addTrip(update)
+          .then((response) => {
+            this._tripsModel.addTrip(updateType, response);
+          })
+          .catch(() => {
+            this._tripNewPresenter.setAborting();
+          });
         break;
       case UserAction.DELETE_TRIP:
-        this._tripsModel.deleteTrip(updateType, update);
+        this._tripPresenter[update.id].setViewState(WaypointPresenterViewState.DELETING);
+        this._api.deleteTrip(update)
+          .then(() => {
+            this._tripsModel.deleteTrip(updateType, update);
+          })
+          .catch(() => {
+            this._tripPresenter[update.id].setViewState(WaypointPresenterViewState.ABORTING);
+          });
         break;
     }
   }
