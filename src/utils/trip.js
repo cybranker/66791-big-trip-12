@@ -1,8 +1,4 @@
-const getEventWithoutActionName = (type) => {
-  let eventType = type.split(` `)[0].toLowerCase();
-
-  return eventType;
-};
+const getEventWithoutActionName = (type) => type.split(` `)[0].toLowerCase();
 
 const getEventWithActionName = (type) => {
   if (type === `sightseeing` || type === `restaurant`) {
