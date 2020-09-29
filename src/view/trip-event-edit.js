@@ -1,7 +1,6 @@
 import SmartView from "./smart.js";
 import {generateEventType} from "../mock/event-type.js";
-import {SENTENCE, OFFERS_MAP, UserAction} from "../const.js";
-import {getRandomInteger, generateOffers, generateDescription, generatePhotos} from "../mock/trip.js";
+import {UserAction} from "../const.js";
 import {upperFirst, getEventWithActionName, getEventWithoutActionName, humanizeTaskDate} from "../utils/trip.js";
 import flatpickr from "flatpickr";
 import he from "he";
@@ -11,7 +10,7 @@ import "../../node_modules/flatpickr/dist/flatpickr.min.css";
 const BLANK_TRIP = {
   event: `Taxi to`,
   city: ``,
-  offers: {},
+  offers: [],
   description: ``,
   photos: [],
   timeIn: new Date(new Date().setHours(0, 0)),
@@ -21,19 +20,25 @@ const BLANK_TRIP = {
 };
 
 class TripEventEdit extends SmartView {
-  constructor(userAction, trip = BLANK_TRIP) {
+  constructor(userAction, offers, destinations, trip = BLANK_TRIP) {
     super();
     this._data = trip;
+    this._allOffers = offers;
+    this._allDestinations = destinations;
     this._userAction = userAction;
     this._datepickerTimeIn = null;
     this._datepickerTimeOut = null;
+    this._offers = trip.offers.slice();
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
+    this._formRollupClickHandler = this._formRollupClickHandler.bind(this);
     this._timeInChangeHandler = this._timeInChangeHandler.bind(this);
     this._timeOutChangeHandler = this._timeOutChangeHandler.bind(this);
-    this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
+    this._favoriteChangeHandler = this._favoriteChangeHandler.bind(this);
     this._eventTypeChangeHandler = this._eventTypeChangeHandler.bind(this);
+    this._priceChangeHandler = this._priceChangeHandler.bind(this);
+    this._offersChangeHandler = this._offersChangeHandler.bind(this);
     this._eventDestinationChangeHandler = this._eventDestinationChangeHandler.bind(this);
 
     this._setInnerHandlers();
@@ -55,6 +60,7 @@ class TripEventEdit extends SmartView {
   }
 
   reset(trip) {
+    this._offers = trip.offers.slice();
     this.updateData(
         trip
     );
@@ -78,7 +84,7 @@ class TripEventEdit extends SmartView {
   }
 
   _createFavoriteTemplate(favorite) {
-    return `<input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${favorite ? `checked` : ``}>
+    return `<input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" value="${favorite}" name="event-favorite" ${favorite ? `checked` : ``}>
       <label class="event__favorite-btn" for="event-favorite-1">
         <span class="visually-hidden">Add to favorite</span>
         <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -88,28 +94,54 @@ class TripEventEdit extends SmartView {
   }
 
   _createEventPhotosTemplate(photos) {
-    return photos.map((photo) => `<img class="event__photo" src="${photo}" alt="Event photo">`).join(``);
+    return photos.map((photo) => `<img class="event__photo" src="${photo.src}" alt="${photo.description}">`).join(``);
   }
 
-  _createEventOffersTemplate(offers, offersChecked) {
-    return Object.entries(offers).map(([name, offer]) => `<div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${name}-1" type="checkbox" name="event-offer-${name}" ${name in offersChecked ? `checked` : ``}>
-      <label class="event__offer-label" for="event-offer-${name}-1">
-        <span class="event__offer-title">${offer.name}</span>
-        &plus;
-        &euro;&nbsp;<span class="event__offer-price">${offer.price}</span>
-      </label>
-    </div>`).join(``);
+  _createEventOffersTemplate(offers, offersChecked, eventType) {
+    let offersTemplate = ``;
+
+    offers.forEach((it) => {
+      if (it.type === eventType && it.offers.length > 0) {
+        const eventOffersTemplate = it.offers.map((offer, index) => {
+          const {title, price} = offer;
+
+          return `<div class="event__offer-selector">
+            <input class="event__offer-checkbox  visually-hidden" id="event-offer-${eventType}-${index}" type="checkbox" value="${price}" data-title="${title}" name="event-offer-${eventType}-${index}" ${offersChecked.some((offerCheck) => offerCheck.title === title) ? `checked` : ``}>
+            <label class="event__offer-label" for="event-offer-${eventType}-${index}">
+              <span class="event__offer-title">${title}</span>
+              &plus;
+              &euro;&nbsp;<span class="event__offer-price">${price}</span>
+            </label>
+          </div>`;
+        }).join(``);
+
+        offersTemplate = `<section class="event__details">
+      <section class="event__section  event__section--offers">
+      <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+
+      <div class="event__available-offers">
+        ${eventOffersTemplate}
+      </div>
+      </section>`;
+      }
+    });
+
+    return offersTemplate;
   }
 
-  _createTripEventEditTemplate(data) {
+  _createDestinationTemplate(destinations) {
+    return destinations.map((destination) => `<option value="${destination.name}"></option>`).join(``);
+  }
+
+  _createTripEventEditTemplate(data, allOffers, allDestinations) {
     const {event, city, offers, description, photos, timeIn, timeOut, price, isFavorite} = data;
     const isActionAddTrip = this._userAction === UserAction.ADD_TRIP;
 
     const eventTypeGroupsTemplate = this._createEventTypeGroupsTemplate(generateEventType(), getEventWithoutActionName(event));
     const favoriteTemplate = isActionAddTrip ? `` : this._createFavoriteTemplate(isFavorite);
-    const offersTemplate = this._createEventOffersTemplate(OFFERS_MAP, offers);
+    const offersTemplate = this._createEventOffersTemplate(allOffers, offers, getEventWithoutActionName(event));
     const photosTemplate = this._createEventPhotosTemplate(photos);
+    const destinationsTemplate = this._createDestinationTemplate(allDestinations);
 
     const template = `<form class="${isActionAddTrip ? `trip-events__item` : ``} event  event--edit" action="#" method="post">
         <header class="event__header">
@@ -131,9 +163,7 @@ class TripEventEdit extends SmartView {
             </label>
             <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(city)}" list="destination-list-1">
             <datalist id="destination-list-1">
-              <option value="Amsterdam"></option>
-              <option value="Geneva"></option>
-              <option value="Chamonix"></option>
+              ${destinationsTemplate}
             </datalist>
           </div>
 
@@ -167,16 +197,9 @@ class TripEventEdit extends SmartView {
           </button>`}
         </header>
 
-        ${city ? `<section class="event__details">
-          <section class="event__section  event__section--offers">
-            <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+        ${offersTemplate}
 
-            <div class="event__available-offers">
-              ${offersTemplate}
-            </div>
-          </section>
-
-          <section class="event__section  event__section&#45;&#45;destination">
+        ${city ? `<section class="event__section  event__section&#45;&#45;destination">
             <h3 class="event__section-title  event__section-title&#45;&#45;destination">Destination</h3>
             <p class="event__destination-description">${description}</p>
 
@@ -197,13 +220,8 @@ class TripEventEdit extends SmartView {
     this._callback.formSubmit(this._data);
   }
 
-  _favoriteClickHandler(evt) {
-    evt.preventDefault();
-    this._callback.favoriteClick();
-  }
-
   get _template() {
-    return this._createTripEventEditTemplate(this._data);
+    return this._createTripEventEditTemplate(this._data, this._allOffers, this._allDestinations);
   }
 
   restoreHandlers() {
@@ -211,6 +229,7 @@ class TripEventEdit extends SmartView {
     this._setDatepicker();
     this.formSubmitHandler = this._callback.formSubmit;
     this.deleteClickHandler = this._callback.deleteClick;
+    this.rollupClickHandler = this._callback.rollupClick;
   }
 
   _setDatepicker() {
@@ -252,6 +271,21 @@ class TripEventEdit extends SmartView {
     this.element
       .querySelector(`input[name="event-destination"]`)
       .addEventListener(`change`, this._eventDestinationChangeHandler);
+    this.element
+      .querySelector(`.event__input--price`)
+      .addEventListener(`change`, this._priceChangeHandler);
+
+    if (this.element.querySelector(`.event__available-offers`)) {
+      this.element
+        .querySelector(`.event__available-offers`)
+        .addEventListener(`change`, this._offersChangeHandler);
+    }
+
+    if (this.element.querySelector(`.event__favorite-btn`)) {
+      this.element
+        .querySelector(`.event__favorite-checkbox`)
+        .addEventListener(`change`, this._favoriteChangeHandler);
+    }
   }
 
   _timeInChangeHandler([userData]) {
@@ -266,24 +300,81 @@ class TripEventEdit extends SmartView {
     });
   }
 
+  _favoriteChangeHandler(evt) {
+    evt.preventDefault();
+
+    this.updateData({
+      isFavorite: evt.target.checked
+    });
+  }
+
   _eventTypeChangeHandler(evt) {
     evt.preventDefault();
 
     if (evt.target && evt.target.matches(`[name="event-type"]`)) {
+      this._offers = [];
+
       this.updateData({
-        event: getEventWithActionName(evt.target.value)
+        event: getEventWithActionName(evt.target.value),
+        offers: this._offers
       });
     }
   }
 
+  _offersChangeHandler(evt) {
+    evt.preventDefault();
+    let offerPrice = null;
+
+    if (evt.target && evt.target.matches(`.event__offer-checkbox`)) {
+      if (evt.target.checked) {
+        offerPrice = parseInt(evt.target.value, 10);
+
+        this._offers.push({
+          title: evt.target.dataset.title,
+          price: offerPrice
+        });
+      } else {
+        const index = this._offers.findIndex((it) => it.title === evt.target.dataset.title);
+        offerPrice = -parseInt(evt.target.value, 10);
+
+        if (index !== -1) {
+          this._offers.splice(index, 1);
+        }
+      }
+
+      this.updateData({
+        offers: this._offers,
+        price: this._data.price + offerPrice
+      });
+    }
+  }
+
+  _priceChangeHandler(evt) {
+    evt.preventDefault();
+
+    this.updateData({
+      price: evt.target.value
+    });
+  }
+
   _eventDestinationChangeHandler(evt) {
     evt.preventDefault();
-    this.updateData({
-      city: evt.target.value,
-      offers: Object.fromEntries(generateOffers(OFFERS_MAP)),
-      description: generateDescription(SENTENCE),
-      photos: generatePhotos(getRandomInteger(1, 6))
-    });
+
+    const cityName = evt.target.value;
+
+    if (cityName) {
+      const {name, description, pictures} = this._allDestinations.filter((destinationCheck) => destinationCheck.name === cityName)[0];
+
+      this.updateData({
+        city: name,
+        description,
+        photos: pictures
+      });
+    } else {
+      this.updateData({
+        city: cityName
+      });
+    }
   }
 
   set formSubmitHandler(callback) {
@@ -292,19 +383,24 @@ class TripEventEdit extends SmartView {
     element.addEventListener(`submit`, this._formSubmitHandler);
   }
 
-  set favoriteClickHandler(callback) {
-    this._callback.favoriteClick = callback;
-    this.element.querySelector(`.event__favorite-btn`).addEventListener(`click`, this._favoriteClickHandler);
-  }
-
   _formDeleteClickHandler(evt) {
     evt.preventDefault();
     this._callback.deleteClick(this._data);
   }
 
+  _formRollupClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.rollupClick(evt);
+  }
+
   set deleteClickHandler(callback) {
     this._callback.deleteClick = callback;
     this.element.querySelector(`.event__reset-btn`).addEventListener(`click`, this._formDeleteClickHandler);
+  }
+
+  set rollupClickHandler(callback) {
+    this._callback.rollupClick = callback;
+    this.element.querySelector(`.event__rollup-btn`).addEventListener(`click`, this._formRollupClickHandler);
   }
 }
 

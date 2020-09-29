@@ -20,25 +20,25 @@ class Waypoint {
     this._mode = Mode.DEFAULT;
 
     this._handleEditClick = this._handleEditClick.bind(this);
-    this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
     this._handleDeleteClick = this._handleDeleteClick.bind(this);
+    this._handleRollupClick = this._handleRollupClick.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
   }
 
-  init(trip) {
+  init(trip, offers, destinations) {
     this._trip = trip;
 
     const prevTripEventComponent = this._tripEventComponent;
     const prevTripEventEditComponent = this._tripEventEditComponent;
 
     this._tripEventComponent = new TripEventView(trip);
-    this._tripEventEditComponent = new TripEventEditView(UserAction.UPDATE_TRIP, trip);
+    this._tripEventEditComponent = new TripEventEditView(UserAction.UPDATE_TRIP, offers, destinations, trip);
 
     this._tripEventComponent.editClickHandler = this._handleEditClick;
-    this._tripEventEditComponent.favoriteClickHandler = this._handleFavoriteClick;
     this._tripEventEditComponent.formSubmitHandler = this._handleFormSubmit;
     this._tripEventEditComponent.deleteClickHandler = this._handleDeleteClick;
+    this._tripEventEditComponent.rollupClickHandler = this._handleRollupClick;
 
     if (prevTripEventComponent === null || prevTripEventEditComponent === null) {
       render(this._tripEventsListContainer, this._tripEventComponent, RenderPosition.BEFOREEND);
@@ -93,20 +93,6 @@ class Waypoint {
     this._replaceTripToForm();
   }
 
-  _handleFavoriteClick() {
-    this._changeData(
-        UserAction.UPDATE_TRIP,
-        UpdateType.MINOR,
-        Object.assign(
-            {},
-            this._trip,
-            {
-              isFavorite: !this._trip.isFavorite
-            }
-        )
-    );
-  }
-
   _handleFormSubmit(update) {
     this._changeData(
         UserAction.UPDATE_TRIP,
@@ -122,6 +108,11 @@ class Waypoint {
         UpdateType.MINOR,
         trip
     );
+  }
+
+  _handleRollupClick() {
+    this._tripEventEditComponent.reset(this._trip);
+    this._replaceFormToTrip();
   }
 }
 
