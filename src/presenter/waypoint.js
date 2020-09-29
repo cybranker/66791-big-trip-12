@@ -10,7 +10,8 @@ const Mode = {
 
 const State = {
   SAVING: `SAVING`,
-  DELETING: `DELETING`
+  DELETING: `DELETING`,
+  ABORTING: `ABORTING`
 };
 
 class Waypoint {
@@ -75,6 +76,14 @@ class Waypoint {
   }
 
   setViewState(state) {
+    const resetFormState = () => {
+      this._tripEventEditComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false
+      });
+    };
+
     switch (state) {
       case State.SAVING:
         this._tripEventEditComponent.updateData({
@@ -87,6 +96,10 @@ class Waypoint {
           isDisabled: true,
           isDeleting: true
         });
+        break;
+      case State.ABORTING:
+        this._tripEventComponent.shake(resetFormState);
+        this._tripEventEditComponent.shake(resetFormState);
         break;
     }
   }

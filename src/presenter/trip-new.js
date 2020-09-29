@@ -55,6 +55,18 @@ class TripNew {
     });
   }
 
+  setAborting() {
+    const resetFormState = () => {
+      this._tripEventEditComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false
+      });
+    };
+
+    this._tripEventEditComponent.shake(resetFormState);
+  }
+
   _handleFormSubmit(trip) {
     this._changeData(
         UserAction.ADD_TRIP,

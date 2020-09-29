@@ -94,21 +94,33 @@ class Trip {
     switch (actionType) {
       case UserAction.UPDATE_TRIP:
         this._tripPresenter[update.id].setViewState(WaypointPresenterViewState.SAVING);
-        this._api.updateTrip(update).then((response) => {
-          this._tripsModel.updateTrip(updateType, response);
-        });
+        this._api.updateTrip(update)
+          .then((response) => {
+            this._tripsModel.updateTrip(updateType, response);
+          })
+          .catch(() => {
+            this._tripPresenter[update.id].setViewState(WaypointPresenterViewState.ABORTING);
+          });
         break;
       case UserAction.ADD_TRIP:
         this._tripNewPresenter.setSaving();
-        this._api.addTrip(update).then((response) => {
-          this._tripsModel.addTrip(updateType, response);
-        });
+        this._api.addTrip(update)
+          .then((response) => {
+            this._tripsModel.addTrip(updateType, response);
+          })
+          .catch(() => {
+            this._tripNewPresenter.setAborting();
+          });
         break;
       case UserAction.DELETE_TRIP:
         this._tripPresenter[update.id].setViewState(WaypointPresenterViewState.DELETING);
-        this._api.deleteTrip(update).then(() => {
-          this._tripsModel.deleteTrip(updateType, update);
-        });
+        this._api.deleteTrip(update)
+          .then(() => {
+            this._tripsModel.deleteTrip(updateType, update);
+          })
+          .catch(() => {
+            this._tripPresenter[update.id].setViewState(WaypointPresenterViewState.ABORTING);
+          });
         break;
     }
   }
