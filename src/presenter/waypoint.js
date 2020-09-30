@@ -17,7 +17,6 @@ const State = {
 class Waypoint {
   constructor(tripEventsListContainer, eventsContainer, changeData, changeMode) {
     this._tripEventsListContainer = tripEventsListContainer;
-    this._eventsContainer = eventsContainer;
     this._changeData = changeData;
     this._changeMode = changeMode;
 

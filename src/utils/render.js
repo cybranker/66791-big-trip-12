@@ -28,14 +28,6 @@ const render = (container, child, place) => {
   }
 };
 
-const renderTemplate = (container, template, place) => {
-  if (container instanceof Abstract) {
-    container = container.element;
-  }
-
-  container.insertAdjacentHTML(place, template);
-};
-
 const createElement = (template) => {
   const newElement = document.createElement(`div`);
 
@@ -78,7 +70,6 @@ const remove = (component) => {
 export {
   RenderPosition,
   render,
-  renderTemplate,
   createElement,
   replace,
   remove
