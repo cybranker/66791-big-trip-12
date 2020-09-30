@@ -3,7 +3,6 @@ import {generateEventType} from "../mock/event-type.js";
 import {UserAction} from "../const.js";
 import {upperFirst, getEventWithActionName, getEventWithoutActionName, humanizeTaskDate} from "../utils/trip.js";
 import flatpickr from "flatpickr";
-import moment from "moment";
 import he from "he";
 
 import "../../node_modules/flatpickr/dist/flatpickr.min.css";
@@ -274,6 +273,7 @@ class TripEventEdit extends SmartView {
           enableTime: true,
           dateFormat: `d/m/y H:i`,
           defaultDate: this._data.timeOut,
+          minDate: this._data.timeIn,
           onChange: this._timeOutChangeHandler
         }
     );
