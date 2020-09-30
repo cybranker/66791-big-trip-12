@@ -111,6 +111,7 @@ class Waypoint {
   }
 
   _replaceFormToTrip() {
+    this._tripEventEditComponent.reset(this._trip);
     replace(this._tripEventComponent, this._tripEventEditComponent);
     document.removeEventListener(`keydown`, this._escKeyDownHandler);
     this._mode = Mode.DEFAULT;
@@ -119,7 +120,6 @@ class Waypoint {
   _escKeyDownHandler(evt) {
     if (evt.key === `Escape` || evt.key === `Esc`) {
       evt.preventDefault();
-      this._tripEventEditComponent.reset(this._trip);
       this._replaceFormToTrip();
     }
   }
